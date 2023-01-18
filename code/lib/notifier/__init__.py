@@ -4,4 +4,4 @@ from code.lib.notifier.evaluate_notifier import EvaluateNotifier, EvaluateNotifi
 from code.lib.notifier.result_notifier import ResultNotifier, ResultNotification
 from code.lib.notifier.setting_notifier import SettingNotifier, SettingNotification
 
-from code.base_class.notifier import MLEventType
+from code.base_class.notifier import MLEventType, MLEventNotifier

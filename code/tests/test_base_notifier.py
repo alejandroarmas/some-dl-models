@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from code.lib.method_notifier import MLEventNotifier, MLEventType, MLEventNotifier
+from code.lib.notifier import MLEventType, MLEventNotifier
 
 class TestBaseNotifier(unittest.TestCase):
 
