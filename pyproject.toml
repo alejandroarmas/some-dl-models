@@ -1,0 +1,25 @@
+[[tool.mypy.overrides]]
+module = "comet_ml.*"
+ignore_missing_imports = true
+[tool.poetry]
+name = "some-dl-models"
+version = "0.1.0"
+description = "This is the repository for the ECS189G course on Deep Learning. The main purpose of this project is to help students get familiar with classic deep learning models and use them to solve concrete real-world problems."
+authors = ["Alejandro Armas <armas@ucdavis.edu>", "Lia Hepler-Mackey <lmheplermackey@ucdavis.edu>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "some_dl_models"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+comet-ml = ">=3.31.22"
+torch = ">=1.13.1"
+scikit-learn = ">=1.2.0"
+pytest = ">=7.2.0"
+mypy = ">=0.991"
+pylint = ">=2.15.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
