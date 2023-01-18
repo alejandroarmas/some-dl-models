@@ -3,6 +3,7 @@
 - "Alejandro Armas <armas@ucdavis.edu>", 
 - "Lia Hepler-Mackey <lmheplermackey@ucdavis.edu>", 
 - "Sachin Loecher <smloecher@ucdavis.edu>"
+- "Matthew Schulz <mkschulz@ucdavis.edu>"
 
 ### Getting Started
 
