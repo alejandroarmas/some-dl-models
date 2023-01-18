@@ -9,7 +9,7 @@
 We are using `poetry` as our package manager solution. To get started, run `poetry shell`, to create a nested shell with a virtual environment. Verify your environment with `poetry env info`. Then, run `poetry install` to capture all the dependencies. 
 
 
-To use Comet, make sure to use the environment variable found [here]()
+To use Comet, make sure to use the environment variable found [here](https://www.comet.com/account-settings/apiKeys)
 ```
 export COMET_API_KEY=<paste_your_key_here>
 ```
