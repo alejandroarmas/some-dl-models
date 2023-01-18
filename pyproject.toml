@@ -5,7 +5,7 @@ ignore_missing_imports = true
 name = "some-dl-models"
 version = "0.1.0"
 description = "This is the repository for the ECS189G course on Deep Learning. The main purpose of this project is to help students get familiar with classic deep learning models and use them to solve concrete real-world problems."
-authors = ["Alejandro Armas <armas@ucdavis.edu>", "Lia Hepler-Mackey <lmheplermackey@ucdavis.edu>"]
+authors = ["Alejandro Armas <armas@ucdavis.edu>", "Lia Hepler-Mackey <lmheplermackey@ucdavis.edu>", "Sachin Loecher <smloecher@ucdavis.edu>"]
 license = "MIT"
 readme = "README.md"
 packages = [{include = "some-dl-models"}]
