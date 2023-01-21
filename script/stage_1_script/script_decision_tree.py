@@ -1,44 +1,39 @@
 from code.stage_1_code.Dataset_Loader import Dataset_Loader
-from code.stage_1_code.Method_MLP import Method_MLP
+from code.stage_1_code.Method_DT import Method_DT
 from code.stage_1_code.Result_Saver import Result_Saver
 from code.stage_1_code.Setting_KFold_CV import Setting_KFold_CV
 from code.stage_1_code.Setting_Train_Test_Split import Setting_Train_Test_Split
 from code.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
-from code.stage_1_code.Evaluate_Recall import Evaluate_Recall
-from code.stage_1_code.Evaluate_F1 import Evaluate_F1
-from code.stage_1_code.Evaluate_Precision import Evaluate_Precision
+import numpy as np
 
 from code.base_class.dataset import datasetConfig
 from code.base_class.result import resultConfig
-from code.base_class.method import methodConfig
 from code.base_class.evaluate import EvaluateConfig
 from code.base_class.setting import SettingConfig
+from code.base_class.method import methodConfig
 from code.lib.comet_listeners import CometExperimentTracker, CometConfig
 from code.lib.notifier import *
 
-import numpy as np
-import torch
 
 import os
 
-
-#---- Multi-Layer Perceptron script ----
+#---- Decision Tree script ----
 if 1:
     #---- parameter section -------------------------------
-    np.random.seed(2)
-    torch.manual_seed(2)
+    None
+    np.random.seed(1)
     #------------------------------------------------------
-    # ---- objection initialization setction ---------------
+    
 
-    algorithm_type = "MLP"
+    algorithm_type = "DT"
 
     config = CometConfig(
-            {
-                'api_key': os.environ["COMET_API_KEY"],
-                'project_name': 'some-dl-models',
-                'workspace': 'ecs189g',
-            }
-        )
+        {
+            'api_key': os.environ["COMET_API_KEY"],
+            'project_name': 'some-dl-models',
+            'workspace': 'ecs189g',
+        }
+    )
 
     experiment_tracker = CometExperimentTracker(config)
 
@@ -62,12 +57,12 @@ if 1:
     m_config = methodConfig(
         {
             'name': f'{algorithm_type}-method',
-            'description': 'This is a multilayer perceptron',
+            'description': 'This is a decision tree',
         }
     )
     s_config = SettingConfig(
         {
-            'name': 'Setting_Train_Test_Split',
+            'name': 'Setting_KFold_CV',
             'description': 'This setting enables us to divide our data in sections',
         }
     )
@@ -85,7 +80,7 @@ if 1:
 
     m_notifier = MethodNotifier()
     m_notifier.subscribe(experiment_tracker.method_listener, MLEventType("method"))
-    method_obj = Method_MLP(m_config, m_notifier)
+    method_obj = Method_DT(m_config, m_notifier)
 
     
     r_notifier = ResultNotifier()
@@ -95,20 +90,24 @@ if 1:
 
     s_notifier = SettingNotifier()
     s_notifier.subscribe(experiment_tracker.setting_listener, MLEventType('setting'))
-    setting_obj = Setting_Train_Test_Split(s_config, s_notifier)
+    setting_obj = Setting_KFold_CV(s_config, s_notifier)
     
     e_notifier = EvaluateNotifier()
     e_notifier.subscribe(experiment_tracker.evaluation_listener, MLEventType('evaluate'))
     evaluate_obj = Evaluate_Accuracy(e_config, e_notifier)
 
-    # ------------------------------------------------------
-
-    # ---- running section ---------------------------------
+    #------------------------------------------------------
+    
+    #---- running section ---------------------------------
     print('************ Start ************')
     setting_obj.prepare(data_obj, method_obj, result_obj, evaluate_obj)
     setting_obj.print_setup_summary()
     mean_score, std_score = setting_obj.load_run_save_evaluate()
     print('************ Overall Performance ************')
-    print('MLP Accuracy: ' + str(mean_score) + ' +/- ' + str(std_score))
+    print('Decision Tree Accuracy: ' + str(mean_score) + ' +/- ' + str(std_score))
     print('************ Finish ************')
-    # ------------------------------------------------------    
+    #------------------------------------------------------
+    
+    
+    
+    

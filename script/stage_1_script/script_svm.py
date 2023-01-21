@@ -1,16 +1,12 @@
 from code.stage_1_code.Dataset_Loader import Dataset_Loader
-from code.stage_1_code.Method_MLP import Method_MLP
+from code.stage_1_code.Method_SVM import Method_SVM, methodConfigSVM
 from code.stage_1_code.Result_Saver import Result_Saver
 from code.stage_1_code.Setting_KFold_CV import Setting_KFold_CV
 from code.stage_1_code.Setting_Train_Test_Split import Setting_Train_Test_Split
 from code.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
-from code.stage_1_code.Evaluate_Recall import Evaluate_Recall
-from code.stage_1_code.Evaluate_F1 import Evaluate_F1
-from code.stage_1_code.Evaluate_Precision import Evaluate_Precision
 
 from code.base_class.dataset import datasetConfig
 from code.base_class.result import resultConfig
-from code.base_class.method import methodConfig
 from code.base_class.evaluate import EvaluateConfig
 from code.base_class.setting import SettingConfig
 from code.lib.comet_listeners import CometExperimentTracker, CometConfig
@@ -21,24 +17,25 @@ import torch
 
 import os
 
+#---- Support Vector Machine script ----
+if True:
 
-#---- Multi-Layer Perceptron script ----
-if 1:
     #---- parameter section -------------------------------
+    c = 1.0
     np.random.seed(2)
-    torch.manual_seed(2)
     #------------------------------------------------------
+
     # ---- objection initialization setction ---------------
 
-    algorithm_type = "MLP"
+    algorithm_type = "SVG"
 
     config = CometConfig(
-            {
-                'api_key': os.environ["COMET_API_KEY"],
-                'project_name': 'some-dl-models',
-                'workspace': 'ecs189g',
-            }
-        )
+        {
+            'api_key': os.environ["COMET_API_KEY"],
+            'project_name': 'some-dl-models',
+            'workspace': 'ecs189g',
+        }
+    )
 
     experiment_tracker = CometExperimentTracker(config)
 
@@ -59,15 +56,16 @@ if 1:
             'destination_file_name': 'prediction_result',
         }
     )
-    m_config = methodConfig(
+    m_config = methodConfigSVM(
         {
             'name': f'{algorithm_type}-method',
-            'description': 'This is a multilayer perceptron',
+            'description': 'This is a support vector machine',
+            'c': 1.0
         }
     )
     s_config = SettingConfig(
         {
-            'name': 'Setting_Train_Test_Split',
+            'name': 'Setting_KFold_CV',
             'description': 'This setting enables us to divide our data in sections',
         }
     )
@@ -85,7 +83,7 @@ if 1:
 
     m_notifier = MethodNotifier()
     m_notifier.subscribe(experiment_tracker.method_listener, MLEventType("method"))
-    method_obj = Method_MLP(m_config, m_notifier)
+    method_obj = Method_SVM(m_config, m_notifier)
 
     
     r_notifier = ResultNotifier()
@@ -95,7 +93,7 @@ if 1:
 
     s_notifier = SettingNotifier()
     s_notifier.subscribe(experiment_tracker.setting_listener, MLEventType('setting'))
-    setting_obj = Setting_Train_Test_Split(s_config, s_notifier)
+    setting_obj = Setting_KFold_CV(s_config, s_notifier)
     
     e_notifier = EvaluateNotifier()
     e_notifier.subscribe(experiment_tracker.evaluation_listener, MLEventType('evaluate'))
@@ -109,6 +107,9 @@ if 1:
     setting_obj.print_setup_summary()
     mean_score, std_score = setting_obj.load_run_save_evaluate()
     print('************ Overall Performance ************')
-    print('MLP Accuracy: ' + str(mean_score) + ' +/- ' + str(std_score))
+    print('SVM Accuracy: ' + str(mean_score) + ' +/- ' + str(std_score))
     print('************ Finish ************')
-    # ------------------------------------------------------    
+    # ------------------------------------------------------
+    
+
+    

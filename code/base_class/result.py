@@ -37,6 +37,7 @@ class result:
     result_destination_file_name: str = None
 
     _manager: ResultNotifier
+    _fold_count: int
     
     # initialization function
     def __init__(self, config: resultConfig, manager: ResultNotifier = None):

@@ -5,13 +5,26 @@ Concrete MethodModule class for a specific learning MethodModule
 # Copyright (c) 2017-Current Jiawei Zhang <jiawei@ifmlab.org>
 # License: TBD
 
-from code.base_class.method import method
+from code.base_class.method import method, methodConfig
+from code.lib.notifier import MethodNotifier
 from sklearn import svm
+
+
+
+class methodConfigSVM(methodConfig):
+    c: int
+
 
 
 class Method_SVM(method):
     c = None
     data = None
+
+
+    def __init__(self, config: methodConfig, manager: MethodNotifier):
+        super().__init__(config, manager)
+        self.c = config['c']
+
     
     def train(self, X, y):
         # check here for the svm.SVC doc: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html

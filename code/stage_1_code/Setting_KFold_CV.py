@@ -15,7 +15,7 @@ class Setting_KFold_CV(setting):
     def load_run_save_evaluate(self):
         
         # load dataset
-        loaded_data = self.dataset.load()
+        loaded_data = self._dataset.load()
         
         kf = KFold(n_splits=self.fold, shuffle=True)
         
@@ -28,16 +28,16 @@ class Setting_KFold_CV(setting):
             y_train, y_test = np.array(loaded_data['y'])[train_index], np.array(loaded_data['y'])[test_index]
         
             # run MethodModule
-            self.method.data = {'train': {'X': X_train, 'y': y_train}, 'test': {'X': X_test, 'y': y_test}}
-            learned_result = self.method.run()
+            self._method.data = {'train': {'X': X_train, 'y': y_train}, 'test': {'X': X_test, 'y': y_test}}
+            learned_result = self._method.run()
             
             # save raw ResultModule
-            self.result.data = learned_result
-            self.result.fold_count = fold_count
-            self.result.save()
+            self._result.data = learned_result
+            self._result._fold_count = fold_count
+            self._result.save()
             
-            self.evaluate.data = learned_result
-            score_list.append(self.evaluate.evaluate())
+            self._evaluate.data = learned_result
+            score_list.append(self._evaluate.evaluate())
         
         return np.mean(score_list), np.std(score_list)
 
