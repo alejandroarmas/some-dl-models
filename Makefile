@@ -11,10 +11,11 @@ help:
 	@echo "test    : runs the entire unittest suite."
 
 # Styling
-style:
+lint:
 	poetry run black .
 	poetry run flake8
 	poetry run python -m isort .
+	poetry run mypy .
 
 
 test:
@@ -26,7 +27,7 @@ venv:
 
 # Cleaning
 .PHONY: clean
-clean: style
+clean: lint
 	find . -type f -name "*.DS_Store" -ls -delete
 	find . | grep -E "(__pycache__|\.pyc|\.pyo)" | xargs rm -rf
 	find . | grep -E ".pytest_cache" | xargs rm -rf
