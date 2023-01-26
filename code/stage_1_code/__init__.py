@@ -7,4 +7,3 @@ in the tightly-knit world of scientific Python packages
 (sklearn, numpy, scipy, matplotlib).
 See http://www.ifmlab.org/package.html for complete documentation.
 """
-
