@@ -10,6 +10,10 @@ help:
 	@echo "clean   : cleans all unnecessary files."
 	@echo "test    : runs the entire unittest suite."
 
+
+setup:
+	poetry run pre-commit install
+
 # Styling
 lint:
 	poetry run black .
