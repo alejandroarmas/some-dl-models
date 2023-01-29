@@ -1,17 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict
-
-
 from dataclasses import dataclass
+from typing import Dict, List
 
 
 @dataclass(frozen=True)
-class MLEventType():
+class MLEventType:
     event_str: str
 
 
 class MLEventListener(ABC):
-
     def __init__(self):
         pass
 
@@ -27,9 +24,8 @@ class MLEventNotifier(ABC):
     def __init__(self):
         self.subscribers = {}
 
-
     def subscribe(self, listener: MLEventListener, event_type: MLEventType) -> None:
-        
+
         if event_type.event_str in self.subscribers:
             self.subscribers[event_type.event_str].append(listener)
         else:
@@ -38,8 +34,9 @@ class MLEventNotifier(ABC):
     def unsubscribe(self, listener: MLEventListener, event_type: MLEventType) -> None:
 
         if event_type.event_str in self.subscribers:
-            self.subscribers[event_type.event_str] = [sub for sub in self.subscribers[event_type.event_str] if sub != listener]
-
+            self.subscribers[event_type.event_str] = [
+                sub for sub in self.subscribers[event_type.event_str] if sub != listener
+            ]
 
     def subscription_exists(self, listener: MLEventListener, event_type: MLEventType) -> bool:
         if event_type.event_str not in self.subscribers:
@@ -48,7 +45,6 @@ class MLEventNotifier(ABC):
             if listener is subscriber:
                 return True
         return False
-
 
     @abstractmethod
     def notify(self, event_type: MLEventType, data) -> None:
