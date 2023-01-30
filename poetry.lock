@@ -206,19 +206,20 @@ files = [
 
 [[package]]
 name = "comet-ml"
-version = "3.31.23"
+version = "3.32.0"
 description = "Supercharging Machine Learning"
 category = "main"
 optional = false
 python-versions = ">=3.5"
 files = [
-    {file = "comet_ml-3.31.23-py3-none-any.whl", hash = "sha256:6a793c2e2ee1d50c3cd6cd56e1a20e1b384f1f69ef8abccc9da309945ce32509"},
+    {file = "comet_ml-3.32.0-py3-none-any.whl", hash = "sha256:49e492d845bec6cc7cf07079d9ba91e3b1984177bafcf15d1e763821adba42eb"},
 ]
 
 [package.dependencies]
 dulwich = {version = ">=0.20.6,<0.20.33 || >0.20.33", markers = "python_version >= \"3.0\""}
 everett = {version = ">=1.0.1", extras = ["ini"], markers = "python_version > \"3.5\""}
 jsonschema = ">=2.6.0,<3.1.0 || >3.1.0"
+python-box = "<7.0.0"
 requests = ">=2.18.4"
 requests-toolbelt = ">=0.8.0"
 semantic-version = ">=2.8.0"
@@ -251,7 +252,7 @@ six = "*"
 name = "conventional-pre-commit"
 version = "2.1.1"
 description = "A pre-commit hook that checks commit messages for Conventional Commits formatting."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -464,14 +465,14 @@ pyflakes = ">=3.0.0,<3.1.0"
 
 [[package]]
 name = "identify"
-version = "2.5.15"
+version = "2.5.17"
 description = "File identification library for Python"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "identify-2.5.15-py2.py3-none-any.whl", hash = "sha256:1f4b36c5f50f3f950864b2a047308743f064eaa6f6645da5e5c780d1c7125487"},
-    {file = "identify-2.5.15.tar.gz", hash = "sha256:c22aa206f47cc40486ecf585d27ad5f40adbfc494a3fa41dc3ed0499a23b123f"},
+    {file = "identify-2.5.17-py2.py3-none-any.whl", hash = "sha256:7d526dd1283555aafcc91539acc061d8f6f59adb0a7bba462735b0a318bff7ed"},
+    {file = "identify-2.5.17.tar.gz", hash = "sha256:93cc61a861052de9d4c541a7acb7e3dcc9c11b398a2144f6e52ae5285f5f4f06"},
 ]
 
 [package.extras]
@@ -491,19 +492,19 @@ files = [
 
 [[package]]
 name = "isort"
-version = "5.11.4"
+version = "5.12.0"
 description = "A Python utility / library to sort Python imports."
 category = "dev"
 optional = false
-python-versions = ">=3.7.0"
+python-versions = ">=3.8.0"
 files = [
-    {file = "isort-5.11.4-py3-none-any.whl", hash = "sha256:c033fd0edb91000a7f09527fe5c75321878f98322a77ddcc81adbd83724afb7b"},
-    {file = "isort-5.11.4.tar.gz", hash = "sha256:6db30c5ded9815d813932c04c2f85a360bcdd35fed496f4d8f35495ef0a261b6"},
+    {file = "isort-5.12.0-py3-none-any.whl", hash = "sha256:f84c2818376e66cf843d497486ea8fed8700b340f308f076c6fb1229dff318b6"},
+    {file = "isort-5.12.0.tar.gz", hash = "sha256:8bef7dde241278824a6d83f44a544709b065191b95b6e50894bdc722fcba0504"},
 ]
 
 [package.extras]
-colors = ["colorama (>=0.4.3,<0.5.0)"]
-pipfile-deprecated-finder = ["pipreqs", "requirementslib"]
+colors = ["colorama (>=0.4.3)"]
+pipfile-deprecated-finder = ["pip-shims (>=0.5.2)", "pipreqs", "requirementslib"]
 plugins = ["setuptools"]
 requirements-deprecated-finder = ["pip-api", "pipreqs"]
 
@@ -762,14 +763,14 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.2.2)", "pytest (>=7.2)", "pytest-
 
 [[package]]
 name = "pre-commit"
-version = "3.0.0"
+version = "3.0.2"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 category = "dev"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pre_commit-3.0.0-py2.py3-none-any.whl", hash = "sha256:6af0a0b4137c0903794632f77b7223c4af0373f5cd3337056d2dab32aa3a5caf"},
-    {file = "pre_commit-3.0.0.tar.gz", hash = "sha256:de265f74325f0c3ff1a727a974449315ea9b11975cf6b02c11f26e50acfa48f1"},
+    {file = "pre_commit-3.0.2-py2.py3-none-any.whl", hash = "sha256:f448d5224c70e196a6c6f87961d2333dfdc49988ebbf660477f9efe991c03597"},
+    {file = "pre_commit-3.0.2.tar.gz", hash = "sha256:aa97fa71e7ab48225538e1e91a6b26e483029e6de64824f04760c32557bc91d7"},
 ]
 
 [package.dependencies]
@@ -839,6 +840,42 @@ files = [
     {file = "pyrsistent-0.19.3-py3-none-any.whl", hash = "sha256:ccf0d6bd208f8111179f0c26fdf84ed7c3891982f2edaeae7422575f47e66b64"},
     {file = "pyrsistent-0.19.3.tar.gz", hash = "sha256:1a2994773706bbb4995c31a97bc94f1418314923bd1048c6d964837040376440"},
 ]
+
+[[package]]
+name = "python-box"
+version = "6.1.0"
+description = "Advanced Python dictionaries with dot notation access"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "python-box-6.1.0.tar.gz", hash = "sha256:6e7c243b356cb36e2c0f0e5ed7850969fede6aa812a7f501de7768996c7744d7"},
+    {file = "python_box-6.1.0-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:c14aa4e72bf30f4d573e62ff8030a86548603a100c3fb534561dbedf4a83f454"},
+    {file = "python_box-6.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ab13208b053525ef154a36a4a52873b98a12b18b946edd4c939a4d5080e9a218"},
+    {file = "python_box-6.1.0-cp310-cp310-win_amd64.whl", hash = "sha256:d199cd289b4f4d053770eadd70217c76214aac30b92a23adfb9627fd8558d300"},
+    {file = "python_box-6.1.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:ac44b3b85714a4575cc273b5dbd39ef739f938ef6c522d6757704a29e7797d16"},
+    {file = "python_box-6.1.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3f0036f91e13958d2b37d2bc74c1197aa36ffd66755342eb64910f63d8a2990f"},
+    {file = "python_box-6.1.0-cp311-cp311-win_amd64.whl", hash = "sha256:af6bcee7e1abe9251e9a41ca9ab677e1f679f6059321cfbae7e78a3831e0b736"},
+    {file = "python_box-6.1.0-cp37-cp37m-macosx_10_15_x86_64.whl", hash = "sha256:11cbe62f0dace8a6e2a10d210a5e87b99ad1a1286865568862516794c923a988"},
+    {file = "python_box-6.1.0-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fa4696b5e09ccf695bf05c16bb5ca1fcc95a141a71a31eb262eee8e2ac07189a"},
+    {file = "python_box-6.1.0-cp37-cp37m-win_amd64.whl", hash = "sha256:3638d3559f19ece7fa29f6a6550bc64696cd3b65e3d4154df07a3d06982252ff"},
+    {file = "python_box-6.1.0-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:53998c3b95e31d1f31e46279ef1d27ac30b137746927260901ee61457f8468a0"},
+    {file = "python_box-6.1.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:594b0363b187df855ff8649488b1301dddbbeea769629b7caeb584efe779b841"},
+    {file = "python_box-6.1.0-cp38-cp38-win_amd64.whl", hash = "sha256:1d29eafaa287857751e27fbe9a08dd856480f0037fe988b221eba4dac33e5852"},
+    {file = "python_box-6.1.0-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:9dbd92b67c443a97326273c9239fce04d3b6958be815d293f96ab65bc4a9dae7"},
+    {file = "python_box-6.1.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ed6d7fe47d756dc2d9dea448702cea103716580a2efee7c859954929295fe28e"},
+    {file = "python_box-6.1.0-cp39-cp39-win_amd64.whl", hash = "sha256:7b73f26e40a7adc57b9e39f5687d026dfa8a336f48aefaf852a223b4e37392ad"},
+    {file = "python_box-6.1.0-py3-none-any.whl", hash = "sha256:bdec0a5f5a17b01fc538d292602a077aa8c641fb121e1900dff0591791af80e8"},
+]
+
+[package.extras]
+all = ["msgpack", "ruamel.yaml (>=0.17)", "toml"]
+msgpack = ["msgpack"]
+pyyaml = ["PyYAML"]
+ruamel-yaml = ["ruamel.yaml (>=0.17)"]
+toml = ["toml"]
+tomli = ["tomli", "tomli-w"]
+yaml = ["ruamel.yaml (>=0.17)"]
 
 [[package]]
 name = "pyyaml"
@@ -1066,14 +1103,14 @@ tornado = ["tornado (>=5)"]
 
 [[package]]
 name = "setuptools"
-version = "66.1.1"
+version = "67.0.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "setuptools-66.1.1-py3-none-any.whl", hash = "sha256:6f590d76b713d5de4e49fe4fbca24474469f53c83632d5d0fd056f7ff7e8112b"},
-    {file = "setuptools-66.1.1.tar.gz", hash = "sha256:ac4008d396bc9cd983ea483cb7139c0240a07bbc74ffb6232fceffedc6cf03a8"},
+    {file = "setuptools-67.0.0-py3-none-any.whl", hash = "sha256:9d790961ba6219e9ff7d9557622d2fe136816a264dd01d5997cfc057d804853d"},
+    {file = "setuptools-67.0.0.tar.gz", hash = "sha256:883131c5b6efa70b9101c7ef30b2b7b780a4283d5fc1616383cdf22c83cbefe6"},
 ]
 
 [package.extras]
@@ -1411,4 +1448,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "a37feddab098a6eb64798dff1b305109ed98097d78a57819c6840dccc450dcd4"
+content-hash = "a548cbe7d7ed2d97188ec4cf323c46d9dddd3dac1b568e365bb50571658aa354"
