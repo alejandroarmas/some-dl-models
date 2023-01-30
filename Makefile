@@ -6,9 +6,10 @@ SHELL = /bin/bash
 help:
 	@echo "Commands:"
 	@echo "venv    : creates a virtual environment."
-	@echo "style   : executes style formatting."
+	@echo "lint   : executes style formatting."
 	@echo "clean   : cleans all unnecessary files."
 	@echo "test    : runs the entire unittest suite."
+	@echo "setup    : installs all dependencies."
 
 
 setup:
