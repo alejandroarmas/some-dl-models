@@ -7,6 +7,7 @@ Concrete MethodModule class for a specific learning MethodModule
 
 from code.base_class.method import method, methodConfig
 from code.lib.notifier import MethodNotifier
+from typing import Optional
 
 from sklearn import svm  # type: ignore
 
@@ -19,7 +20,7 @@ class Method_SVM(method):
     c = None
     data = None
 
-    def __init__(self, config: methodConfigSVM, manager: MethodNotifier):
+    def __init__(self, config: methodConfigSVM, manager: Optional[MethodNotifier]):
         super().__init__(config, manager)
         self.c = config["c"]
 

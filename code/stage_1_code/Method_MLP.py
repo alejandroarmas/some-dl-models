@@ -5,11 +5,13 @@ Concrete MethodModule class for a specific learning MethodModule
 # Copyright (c) 2017-Current Jiawei Zhang <jiawei@ifmlab.org>
 # License: TBD
 
-from code.base_class.evaluate import EvaluateConfig
 from code.base_class.method import method, methodConfig
-from code.lib.notifier import MethodNotification, MethodNotifier, MLEventType
-from code.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
-from typing import Optional
+from code.lib.notifier import (
+    ClassificationNotification,
+    MethodNotifier,
+    MLEventType,
+)
+from typing import Any, Optional
 
 import numpy as np
 import torch
@@ -22,13 +24,19 @@ class Method_MLP(method, nn.Module):
     max_epoch = 500
     # it defines the learning rate for gradient descent based optimizer for model learning
     learning_rate = 1e-3
+    metrics: dict[str, Any]
 
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
     # the size of the input/output portal of the model architecture should be consistent with our data input and desired output
-    def __init__(self, config: methodConfig, manager: Optional[MethodNotifier] = None):
-        method.__init__(self, config, manager)
+    def __init__(
+        self,
+        config: methodConfig,
+        manager: Optional[MethodNotifier] = None,
+        metrics: Optional[dict] = None,
+    ):
         nn.Module.__init__(self)
+        method.__init__(self, config, manager, metrics)
         # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
         self.fc_layer_1 = nn.Linear(4, 4)
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
@@ -61,14 +69,6 @@ class Method_MLP(method, nn.Module):
         loss_function = nn.CrossEntropyLoss()
         # for training accuracy investigation purpose
 
-        e_config = EvaluateConfig(
-            {
-                "name": "accurracy",
-                "description": "This is the training object evaluator, it is used as part of the critereon",
-            }
-        )
-        accuracy_evaluator = Evaluate_Accuracy(e_config)
-
         # it will be an iterative gradient updating process
         # we don't do mini-batch, we use the whole input as one batch
         # you can try to split X and y into smaller-sized batches by yourself
@@ -92,27 +92,26 @@ class Method_MLP(method, nn.Module):
             optimizer.step()
 
             if self.notification_manager is not None:
-                accuracy_evaluator.data = {"true_y": y_true, "pred_y": y_pred.max(1)[1]}
+                for _, m in self.batch_metrics.items():
+                    m.update(y_true, y_pred.max(1)[1])
+
                 self.notification_manager.notify(
                     MLEventType("method"),
-                    MethodNotification(
-                        y_true,
-                        y_pred.max(1)[1],
-                        epoch,
-                        accuracy_evaluator.evaluate(),
-                        train_loss.item(),
+                    ClassificationNotification(
+                        epoch=epoch,
+                        loss=train_loss.item(),
+                        **{n: m.compute() for n, m in self.batch_metrics.items()},
                     ),
                 )
 
             if epoch % 100 == 0:
-                accuracy_evaluator.data = {"true_y": y_true, "pred_y": y_pred.max(1)[1]}
                 print(
                     "Epoch:",
                     epoch,
-                    "Accuracy:",
-                    accuracy_evaluator.evaluate(),
                     "Loss:",
                     train_loss.item(),
+                    "Metrics:",
+                    {k: m.compute().item() for k, m in self.batch_metrics.items()},
                 )
 
     def test(self, X):

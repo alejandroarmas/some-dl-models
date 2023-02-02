@@ -21,6 +21,12 @@ from code.stage_1_code.Setting_Train_Test_Split import Setting_Train_Test_Split
 
 import numpy as np
 import torch
+from torchmetrics.classification import (
+    BinaryAccuracy,
+    BinaryF1Score,
+    BinaryPrecision,
+    BinaryRecall,
+)
 
 # ---- Multi-Layer Perceptron script ----
 if 1:
@@ -82,7 +88,14 @@ if 1:
 
     m_notifier = MethodNotifier()
     m_notifier.subscribe(experiment_tracker.method_listener, MLEventType("method"))
-    method_obj = Method_MLP(m_config, m_notifier)
+    batch_metrics = {
+        "accuracy": BinaryAccuracy(),
+        "f1": BinaryF1Score(),
+        "precision": BinaryPrecision(),
+        "recall": BinaryRecall(),
+    }
+
+    method_obj = Method_MLP(m_config, m_notifier, batch_metrics)
 
     r_notifier = ResultNotifier()
     r_notifier.subscribe(experiment_tracker.result_listener, MLEventType("save"))
@@ -94,13 +107,13 @@ if 1:
 
     e_notifier = EvaluateNotifier()
     e_notifier.subscribe(experiment_tracker.evaluation_listener, MLEventType("evaluate"))
-    evaluate_obj = Evaluate_Accuracy(e_config, e_notifier)
+    final_evaluation = Evaluate_Accuracy(e_config, e_notifier)
 
     # ------------------------------------------------------
 
     # ---- running section ---------------------------------
     print("************ Start ************")
-    setting_obj.prepare(data_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.prepare(data_obj, method_obj, result_obj, final_evaluation)
     setting_obj.print_setup_summary()
     mean_score, std_score = setting_obj.load_run_save_evaluate()
     print("************ Overall Performance ************")
