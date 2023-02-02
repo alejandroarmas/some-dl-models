@@ -8,6 +8,7 @@ from code.lib.notifier.evaluate_notifier import (
     EvaluateNotifier,
 )
 from code.lib.notifier.method_notifier import (
+    ClassificationNotification,
     MethodNotification,
     MethodNotifier,
 )

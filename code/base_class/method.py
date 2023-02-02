@@ -19,6 +19,11 @@ class method:
     """
     MethodModule: Abstract Class
     Entries: method_name: the name of the MethodModule
+            batch_metrics (Optional[dict]): see method_notifier.py to see what are the allowable types of metrics
+                to pass into this dict
+            notification_manager (Optional[MethodNotifier]): this pings our experiment handler with information
+                pertinent to each epoch's training. Through this we are able to log information.
+
              method_description: the textual description of the MethodModule
 
              method_start_time: start running time of MethodModule
@@ -33,6 +38,8 @@ class method:
 
     data = None
     notification_manager: Optional[MethodNotifier]
+
+    batch_metrics: Optional[dict]
     method_start_time = None
     method_stop_time = None
     method_running_time = None
@@ -40,10 +47,16 @@ class method:
     method_testing_time = None
 
     # initialization function
-    def __init__(self, config: methodConfig, manager: Optional[MethodNotifier] = None):
+    def __init__(
+        self,
+        config: methodConfig,
+        manager: Optional[MethodNotifier] = None,
+        metrics: Optional[dict] = None,
+    ):
         self.method_name = config["name"]
         self.method_description = config["description"]
         self.notification_manager = manager
+        self.batch_metrics = metrics
 
     # running function
     @abc.abstractmethod

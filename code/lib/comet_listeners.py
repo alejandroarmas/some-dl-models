@@ -27,9 +27,10 @@ class CometMethodHandler(MLEventListener):
 
         with self.__experiment.test():
 
-            self.__experiment.log_metrics(
-                {"accuracy": data.accuracy, "loss": data.loss}, step=self.__step, epoch=data.epoch
-            )
+            data_report = {k: v for k, v in data.dict().items() if k not in {"epoch"}}
+
+            self.__experiment.log_metrics(data_report, step=self.__step, epoch=data.epoch)
+
             self.__step = self.__step + 1
 
 
