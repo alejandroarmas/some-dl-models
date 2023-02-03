@@ -47,12 +47,10 @@ jobs:
 
       - name: Sort Imports
         run: poetry run python -m isort .
-      - name: Lint Python Code
+      - name: Lint Python with flake8
         run: 	poetry run flake8
+      - name: Reformat Code with Black
+        run: 	poetry run black .
 
       - name: Run the unittests on code
         run: make test
-
-      - run: black --diff --check $(git ls-files '*.py')
-      # - run: pylint --disable=all --enable=unused-import $(git ls-files '*.py')
-      - run: mypy --strict $(git ls-files '*.py')
