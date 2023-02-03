@@ -47,12 +47,8 @@ jobs:
 
       - name: Sort Imports
         run: poetry run python -m isort .
-      - name: Run linters
-        uses: wearerequired/lint-action@v2
-        with:
-          black: true
-          flake8: true
-          mypy: true
+      - name: Lint Python Code
+        run: 	poetry run flake8
 
       - name: Run the unittests on code
         run: make test
