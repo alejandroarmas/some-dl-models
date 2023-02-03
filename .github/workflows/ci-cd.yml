@@ -45,8 +45,15 @@ jobs:
       #              run test suite
       #----------------------------------------------
 
-      - name: Run the linter on code
-        run: make lint
+      - name: Sort Imports
+        run: poetry run python -m isort .
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          black: true
+          flake8: true
+          mypy: true
+
       - name: Run the unittests on code
         run: make test
 
