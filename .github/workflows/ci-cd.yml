@@ -51,6 +51,8 @@ jobs:
         run: 	poetry run flake8
       - name: Reformat Code with Black
         run: 	poetry run black .
+      - name: Perform Python Type Annotation Static Analysis with Mypy
+        run:  poetry run mypy .
 
       - name: Run the unittests on code
         run: make test
