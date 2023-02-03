@@ -58,3 +58,7 @@ line_length = 79
 multi_line_output = 3
 include_trailing_comma = true
 virtual_env = "venv"
+
+[tool.mypy]
+python_version = "3.10"
+exclude = ".venv"

@@ -49,3 +49,7 @@ jobs:
         run: make lint
       - name: Run the unittests on code
         run: make test
+
+      - run: black --diff --check $(git ls-files '*.py')
+      # - run: pylint --disable=all --enable=unused-import $(git ls-files '*.py')
+      - run: mypy --strict $(git ls-files '*.py')
