@@ -19,7 +19,7 @@ class TestExample(unittest.TestCase):
                 "name": "stage_2_data_test",
                 "description": "...",
                 "source_folder_path": "./data/stage_2_data/",
-                "source_file_name": "test.csv",
+                "source_file_name": "unittest_dataset.csv",
             }
         )
 
