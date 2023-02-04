@@ -99,7 +99,7 @@ if 1:
 
     r_notifier = ResultNotifier()
     r_notifier.subscribe(experiment_tracker.result_listener, MLEventType("save"))
-    result_obj = Result_Saver(r_config, r_notifier)
+    result_obj = Result_Saver(r_config, r_notifier, method_obj)
 
     s_notifier = SettingNotifier()
     s_notifier.subscribe(experiment_tracker.setting_listener, MLEventType("setting"))
@@ -110,7 +110,6 @@ if 1:
     final_evaluation = Evaluate_Accuracy(e_config, e_notifier)
 
     # ------------------------------------------------------
-
     # ---- running section ---------------------------------
     print("************ Start ************")
     setting_obj.prepare(data_obj, method_obj, result_obj, final_evaluation)
@@ -120,3 +119,4 @@ if 1:
     print("MLP Accuracy: " + str(mean_score) + " +/- " + str(std_score))
     print("************ Finish ************")
     # ------------------------------------------------------
+    print(method_obj.state_dict())

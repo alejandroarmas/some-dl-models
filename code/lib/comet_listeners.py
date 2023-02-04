@@ -58,6 +58,9 @@ class CometResultHandler(MLEventListener):
 
     def update(self, data: ResultNotification) -> None:
         self.__experiment.log_parameter("filename", data.filename)
+        # Maybe do model saving here?
+        if data.state_dict is not None:
+            self.__experiment.log_model("Model_Artifacts", data.artifact_filename)
 
 
 class CometSettingHandler(MLEventListener):

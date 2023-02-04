@@ -10,6 +10,8 @@ import abc
 from code.lib.notifier import ResultNotifier
 from typing import Optional, TypedDict
 
+from torch import nn
+
 
 class resultConfig(TypedDict):
     name: str
@@ -35,14 +37,23 @@ class result:
     _manager: Optional[ResultNotifier]
     fold_count: Optional[int]
 
+    # contains a reference to the model, necessary for properly notifying the handlers to save artifacts
+    parent_model: Optional[nn.Module]
+
     # initialization function
-    def __init__(self, config: resultConfig, manager: Optional[ResultNotifier] = None):
+    def __init__(
+        self,
+        config: resultConfig,
+        manager: Optional[ResultNotifier] = None,
+        parent_model: Optional[nn.Module] = None,
+    ):
 
         self.result_name = config["name"]
         self.result_description = config["description"]
         self.result_destination_folder_path = config["destination_folder_path"]
         self.result_destination_file_name = config["destination_file_name"]
         self._manager = manager
+        self.parent_model = parent_model
 
     def get_data(self, _d) -> None:
         self.data = _d

@@ -1,6 +1,7 @@
 from code.base_class.notifier import MLEventNotifier, MLEventType
+from collections import OrderedDict
 from dataclasses import dataclass
-from typing import TypedDict
+from typing import Optional, TypedDict
 
 import torch
 
@@ -14,6 +15,8 @@ class Data(TypedDict):
 class ResultNotification:
     data: Data
     filename: str
+    artifact_filename: str
+    state_dict: Optional[OrderedDict]
 
 
 class ResultNotifier(MLEventNotifier):
