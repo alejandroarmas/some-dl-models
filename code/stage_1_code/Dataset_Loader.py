@@ -6,8 +6,9 @@ Concrete IO class for a specific dataset
 # License: TBD
 
 from code.base_class.dataset import dataset, datasetConfig
-from code.lib.notifier import DatasetNotification, DatasetNotifier, MLEventType
+from code.lib.notifier import DatasetNotifier
 from typing import Optional
+
 import pandas as pd
 
 
@@ -27,9 +28,9 @@ class Dataset_Loader(dataset):
         # with open(file_Path) as file:
         data_Frame = pd.read_csv(file_Path)
         print(data_Frame, "\n")
-        
+
         # extract labels and features from dataset ([row_start:row_end , column_start, column_end])
         y = data_Frame.iloc[:, 0]
         X = data_Frame.iloc[:, 1:]
 
-        return(X, y)
+        return (X, y)

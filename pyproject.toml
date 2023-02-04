@@ -11,7 +11,7 @@ readme = "README.md"
 packages = [{include = "some-dl-models"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.12"
 comet-ml = ">=3.31.22"
 torch = ">=1.13.1"
 scikit-learn = ">=1.2.0"
@@ -27,6 +27,7 @@ isort = "^5.11.4"
 pre-commit = "^3.0.0"
 conventional-pre-commit = "^2.1.1"
 coverage = "^7.1.0"
+pandas-stubs = "^1.5.3.230203"
 
 [build-system]
 requires = ["poetry-core"]
