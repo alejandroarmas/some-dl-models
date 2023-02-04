@@ -6,16 +6,16 @@ from code.lib.notifier import (
     ResultNotification,
     SettingNotification,
 )
-from typing import Protocol, runtime_checkable
+from typing import Optional, Protocol, runtime_checkable
 
 
 @runtime_checkable
 class ExperimentTracker(Protocol):
-    method_listener: MLEventListener
-    evaluate_listener: MLEventListener
-    result_listener: MLEventListener
-    setting_listener: MLEventListener
-    dataset_listener: MLEventListener
+    method_listener: Optional[MLEventListener]
+    evaluate_listener: Optional[MLEventListener]
+    result_listener: Optional[MLEventListener]
+    setting_listener: Optional[MLEventListener]
+    dataset_listener: Optional[MLEventListener]
 
     def log_model(self) -> None:
         ...  # Empty method body (explicit '...')

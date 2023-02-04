@@ -122,11 +122,7 @@ class Method_MLP(method, nn.Module):
                     {k: m.compute().item() for k, m in self.batch_metrics.items()},
                 )
 
-        optimizer_state = optimizer.state_dict()["param_groups"]
-        print(f"Optimizer:{optimizer_state}")
-
     def test(self, X):
-        print(f"Network: {self.state_dict()}")
         # do the testing, and result the result
         y_pred = self.forward(torch.FloatTensor(np.array(X)))
         # convert the probability distributions to the corresponding labels

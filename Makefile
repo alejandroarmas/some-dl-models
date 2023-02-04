@@ -10,7 +10,12 @@ help:
 	@echo "clean   : cleans all unnecessary files."
 	@echo "test    : runs the entire unittest suite."
 	@echo "setup    : installs all dependencies."
+	@echo "stage_2   : trains our stage 2 MLP."
 
+
+stage_2:
+	poetry run python -m script.stage_2_script.stage_2_script_mlp
+	poetry run python -m script.stage_2_script.stage_2_load_result
 
 setup:
 	poetry run pre-commit install

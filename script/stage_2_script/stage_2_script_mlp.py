@@ -46,7 +46,7 @@ if 1:
         }
     )
 
-    experiment_tracker = CometExperimentTracker(config)
+    experiment_tracker = CometExperimentTracker(config, dry_run=True)
 
     d_config = datasetConfig(
         {
@@ -61,7 +61,7 @@ if 1:
         {
             "name": "toy",
             "description": "...data description...",
-            "destination_folder_path": f"result/stage_1_result/{algorithm_type}_",
+            "destination_folder_path": f"result/stage_2_result/{algorithm_type}_",
             "destination_file_name": "prediction_result",
         }
     )
