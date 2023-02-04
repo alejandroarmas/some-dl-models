@@ -8,6 +8,7 @@ Concrete IO class for a specific dataset
 from code.base_class.dataset import dataset, datasetConfig
 from code.lib.notifier import DatasetNotification, DatasetNotifier, MLEventType
 from typing import Optional
+import pandas as pd
 
 
 class Dataset_Loader(dataset):
@@ -17,19 +18,18 @@ class Dataset_Loader(dataset):
         super().__init__(config, manager)
 
     def load(self):
-        print("loading data...")
+        print("\nloading data...\n")
         X = []
         y = []
 
-        filename = f"{self.dataset_source_folder_path}{self.dataset_source_file_name}"
+        # read in dataset using pandas
+        file_Path = self.dataset_source_folder_path + self.dataset_source_file_name
+        # with open(file_Path) as file:
+        data_Frame = pd.read_csv(file_Path)
+        print(data_Frame, "\n")
+        
+        # extract labels and features from dataset ([row_start:row_end , column_start, column_end])
+        y = data_Frame.iloc[:, 0]
+        X = data_Frame.iloc[:, 1:]
 
-        with open(filename, "r") as f:
-            for line in f:
-                line = line.strip("\n")
-                elements = [int(i) for i in line.split(" ")]
-                X.append(elements[:-1])
-                y.append(elements[-1])
-            if self._manager is not None:
-                self._manager.notify(MLEventType("load"), DatasetNotification(len(X), filename))
-
-        return {"X": X, "y": y}
+        return(X, y)
