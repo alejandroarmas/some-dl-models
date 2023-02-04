@@ -69,6 +69,14 @@ if 1:
         {
             "name": f"{algorithm_type}-method",
             "description": "This is a multilayer perceptron",
+            "hyperparameters": {
+                "max_epoch": 500,
+                "learning_rate": 5e-3,
+                "input_dim": 784,
+                "hidden_dim_0": 256,
+                "hidden_dim_1": 64,
+                "output_dim": 10,
+            },
         }
     )
     s_config = SettingConfig(
@@ -89,10 +97,10 @@ if 1:
     m_notifier = MethodNotifier()
     m_notifier.subscribe(experiment_tracker.method_listener, MLEventType("method"))
     batch_metrics = {
-        "accuracy": MulticlassAccuracy(num_classes=10),
-        "f1": MulticlassF1Score(num_classes=10),
-        "precision": MulticlassPrecision(num_classes=10),
-        "recall": MulticlassRecall(num_classes=10),
+        "accuracy": MulticlassAccuracy(num_classes=m_config["hyperparameters"]["output_dim"]),
+        "f1": MulticlassF1Score(num_classes=m_config["hyperparameters"]["output_dim"]),
+        "precision": MulticlassPrecision(num_classes=m_config["hyperparameters"]["output_dim"]),
+        "recall": MulticlassRecall(num_classes=m_config["hyperparameters"]["output_dim"]),
     }
 
     method_obj = Method_MLP(m_config, m_notifier, batch_metrics)

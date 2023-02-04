@@ -13,6 +13,7 @@ from typing import Optional, TypedDict
 class methodConfig(TypedDict):
     name: str
     description: str
+    hyperparameters: dict
 
 
 class method:

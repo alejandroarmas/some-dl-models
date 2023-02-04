@@ -69,6 +69,7 @@ if 1:
         {
             "name": f"{algorithm_type}-method",
             "description": "This is a multilayer perceptron",
+            "hyperparameters": {},
         }
     )
     s_config = SettingConfig(

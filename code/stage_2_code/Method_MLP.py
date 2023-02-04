@@ -20,10 +20,6 @@ from torch import nn
 
 class Method_MLP(method, nn.Module):
     data = None
-    # it defines the max rounds to train the model
-    max_epoch = 500
-    # it defines the learning rate for gradient descent based optimizer for model learning
-    learning_rate = 1e-3
     metrics: dict[str, Any]
 
     # it defines the the MLP model architecture, e.g.,
@@ -38,13 +34,23 @@ class Method_MLP(method, nn.Module):
         nn.Module.__init__(self)
         method.__init__(self, config, manager, metrics)
         # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
-        self.fc_layer_1 = nn.Linear(784, 400)
+        self.fc_layer_1 = nn.Linear(
+            config["hyperparameters"]["input_dim"], config["hyperparameters"]["hidden_dim_0"]
+        )
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
-        self.activation_func_1 = nn.ReLU()
-        self.fc_layer_2 = nn.Linear(400, 10)
+        self.activation_func_1 = nn.Tanh()
+        self.fc_layer_2 = nn.Linear(
+            config["hyperparameters"]["hidden_dim_0"], config["hyperparameters"]["hidden_dim_1"]
+        )
+        self.activation_func_2 = nn.Tanh()
+        self.fc_layer_3 = nn.Linear(
+            config["hyperparameters"]["hidden_dim_1"], config["hyperparameters"]["output_dim"]
+        )
         # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
         column = 1
-        self.activation_func_2 = nn.Softmax(dim=column)
+        self.activation_func_3 = nn.Softmax(dim=column)
+        self.learning_rate = config["hyperparameters"]["learning_rate"]
+        self.max_epoch = config["hyperparameters"]["max_epoch"]
 
     # it defines the forward propagation function for input x
     # this function will calculate the output layer by layer
@@ -52,12 +58,13 @@ class Method_MLP(method, nn.Module):
     def forward(self, x):
         """Forward propagation"""
         # hidden layer embeddings
-        h = self.activation_func_1(self.fc_layer_1(x))
+        h1 = self.activation_func_1(self.fc_layer_1(x))
+        h2 = self.activation_func_2(self.fc_layer_2(h1))
         # outout layer result
         # self.fc_layer_2(h) will be a nx2 tensor
         # n (denotes the input instance number): 0th dimension; 2 (denotes the class number): 1st dimension
         # we do softmax along dim=1 to get the normalized classification probability distributions for each instance
-        y_pred = self.activation_func_2(self.fc_layer_2(h))
+        y_pred = self.activation_func_3(self.fc_layer_3(h2))
         return y_pred
 
     # backward error propagation will be implemented by pytorch automatically
@@ -115,7 +122,11 @@ class Method_MLP(method, nn.Module):
                     {k: m.compute().item() for k, m in self.batch_metrics.items()},
                 )
 
+        optimizer_state = optimizer.state_dict()["param_groups"]
+        print(f"Optimizer:{optimizer_state}")
+
     def test(self, X):
+        print(f"Network: {self.state_dict()}")
         # do the testing, and result the result
         y_pred = self.forward(torch.FloatTensor(np.array(X)))
         # convert the probability distributions to the corresponding labels

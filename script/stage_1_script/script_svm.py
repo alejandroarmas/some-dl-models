@@ -63,6 +63,7 @@ if True:
         {
             "name": f"{algorithm_type}-method",
             "description": "This is a support vector machine",
+            "hyperparameters": {},
             "c": 1.0,
         }
     )
