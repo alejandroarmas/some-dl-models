@@ -40,7 +40,7 @@ class TestArtifacts(unittest.TestCase):
 
         artifact_encoder_0 = ONNX(a_config_0, None, None)
         method_obj_0 = artifact_encoder_0.deserialize()
-
+        # checks to make sure the model is structurally sound. If not an exception is thrown
         onnx.checker.check_model(method_obj_0)
 
 
