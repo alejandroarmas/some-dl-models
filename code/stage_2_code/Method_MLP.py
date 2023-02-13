@@ -70,7 +70,7 @@ class Method_MLP(method, nn.Module):
     # backward error propagation will be implemented by pytorch automatically
     # so we don't need to define the error backpropagation function here
 
-    def train(self, X, y):
+    def train_model(self, X, y):
         # check here for the torch.optim doc: https://pytorch.org/docs/stable/optim.html
         optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         # check here for the nn.CrossEntropyLoss doc: https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
@@ -112,7 +112,7 @@ class Method_MLP(method, nn.Module):
                     ),
                 )
 
-            if epoch % 100 == 0:
+            if epoch % 100 == 0 and self.batch_metrics is not None:
                 print(
                     "Epoch:",
                     epoch,
@@ -132,7 +132,7 @@ class Method_MLP(method, nn.Module):
     def run(self):
         print("method running...")
         print("--start training...")
-        self.train(self.data["train"]["X"], self.data["train"]["y"])
+        self.train_model(self.data["train"]["X"], self.data["train"]["y"])
         print("--start testing...")
         pred_y = self.test(self.data["test"]["X"])
         return {"pred_y": pred_y, "true_y": self.data["test"]["y"]}
