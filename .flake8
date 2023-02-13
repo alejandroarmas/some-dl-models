@@ -4,6 +4,7 @@ exclude =
     env
     .env
     ./.venv
+    venv
 ignore = E501, W503, E226
 max-line-length = 79
 per-file-ignores = __init__.py:F401
