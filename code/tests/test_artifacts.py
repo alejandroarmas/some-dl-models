@@ -12,7 +12,7 @@ import onnx
 
 
 class TestArtifacts(unittest.TestCase):
-    # Loads in a sample model from memory exported from an earlier experiment and checks its structural integrity
+    # Loads in a sample model from memory exported from an earlier experiment and checks its structural integrity.
     def test_artifacts(self):
         m_config = methodConfig(
             {
