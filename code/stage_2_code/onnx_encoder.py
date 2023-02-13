@@ -6,6 +6,10 @@ import onnx
 import torch
 from torch import nn
 
+"""
+Class for handling encoding and decoding of models to the ONNX file format
+"""
+
 
 class ONNX(artifacts):
     def __init__(

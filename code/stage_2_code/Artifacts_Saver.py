@@ -5,6 +5,11 @@ from code.lib.notifier.artifacts_notifier import ArtifactsNotification
 
 from torch import nn
 
+"""
+Wrapper class for any artifacts object supporting encoding data. Calls to serialize() will run the wrapped objects
+serialization function while also logging the saved file to Comet.
+"""
+
 
 class Artifacts_Saver(artifacts):
     encoder: artifacts
