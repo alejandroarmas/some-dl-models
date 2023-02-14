@@ -10,8 +10,8 @@ import onnx
 import pandas as pd
 
 """
-    To run this class, perform `python -m code.tests.test_example`
-    in the command line.
+Tests ONNX encoding and decoding of a small MLP
+To perform this unit test run: "poetry run python -m unittest code.tests.test_artifacts"
 """
 
 
@@ -46,7 +46,7 @@ class TestArtifacts(unittest.TestCase):
         y = pd.Series(np.random.rand(20))
 
         method_obj_0.train_model(X, y)
-        artifact_encoder_0 = ONNX(a_config_0, method_obj_0, None)
+        artifact_encoder_0 = ONNX(a_config_0, method_obj_0)
         artifact_encoder_0.serialize()
 
         method_obj_1 = artifact_encoder_0.deserialize()

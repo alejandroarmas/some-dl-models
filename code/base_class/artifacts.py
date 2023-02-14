@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from code.lib.notifier.artifacts_notifier import ArtifactsNotifier
 from typing import Optional, TypedDict
 
 from torch import nn
@@ -23,15 +22,8 @@ class artifacts(ABC):
     output_dim: int
 
     model: Optional[nn.Module]
-    _manager: Optional[ArtifactsNotifier]
 
-    def __init__(
-        self,
-        config: artifactConfig,
-        extension: str,
-        model: Optional[nn.Module],
-        manager: Optional[ArtifactsNotifier] = None,
-    ):
+    def __init__(self, config: artifactConfig, extension: str, model: Optional[nn.Module]):
         self.folder_path = config["folder_path"]
         self.model_name = config["model_name"]
         self.extension = (
@@ -41,7 +33,6 @@ class artifacts(ABC):
         self.batch_size = config["batch_size"]
         self.output_dim = config["output_dim"]
         self.model = model
-        self._manager = manager
 
     @abstractmethod
     def serialize(self):

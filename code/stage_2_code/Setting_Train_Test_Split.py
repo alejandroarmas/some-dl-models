@@ -33,6 +33,9 @@ class Setting_Train_Test_Split(setting):
         self._result.data = learned_result
         self._result.save()
 
+        # saves model artifacts to disk
+        self._artifacts.serialize()
+
         self._evaluate.data = learned_result
 
         return self._evaluate.evaluate(), None

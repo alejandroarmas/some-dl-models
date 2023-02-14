@@ -1,5 +1,4 @@
 from code.base_class.artifacts import artifactConfig, artifacts
-from code.lib.notifier.artifacts_notifier import ArtifactsNotifier
 from typing import Optional
 
 import onnx
@@ -12,13 +11,8 @@ Class for handling encoding and decoding of models to the ONNX file format
 
 
 class ONNX(artifacts):
-    def __init__(
-        self,
-        config: artifactConfig,
-        model: Optional[torch.nn.Module] = None,
-        manager: Optional[ArtifactsNotifier] = None,
-    ):
-        super().__init__(config, ".onnx", model, manager)
+    def __init__(self, config: artifactConfig, model: Optional[torch.nn.Module] = None):
+        super().__init__(config, ".onnx", model)
 
     def serialize(self) -> None:
 

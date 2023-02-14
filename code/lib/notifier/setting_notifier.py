@@ -9,6 +9,7 @@ class SettingMSG(TypedDict):
     setting: str
     result: str
     evaluation: str
+    artifacts: str
 
 
 @dataclass(frozen=True)
