@@ -1,4 +1,5 @@
 import os
+from code.base_class.artifacts import artifactConfig
 from code.base_class.dataset import datasetConfig
 from code.base_class.evaluate import EvaluateConfig
 from code.base_class.result import resultConfig
@@ -12,11 +13,14 @@ from code.lib.notifier import (
     ResultNotifier,
     SettingNotifier,
 )
+from code.lib.notifier.artifacts_notifier import ArtifactsNotifier
 from code.stage_1_code.Dataset_Loader import Dataset_Loader
 from code.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
 from code.stage_1_code.Method_SVM import Method_SVM, methodConfigSVM
 from code.stage_1_code.Result_Saver import Result_Saver
 from code.stage_1_code.Setting_KFold_CV import Setting_KFold_CV
+from code.stage_2_code.Artifacts_Saver import Artifacts_Saver
+from code.stage_2_code.onnx_encoder import ONNX
 
 import numpy as np
 
@@ -98,11 +102,27 @@ if True:
     e_notifier.subscribe(experiment_tracker.evaluation_listener, MLEventType("evaluate"))
     evaluate_obj = Evaluate_Accuracy(e_config, e_notifier)
 
+    a_config = artifactConfig(
+        {
+            "folder_path": "result/stage_2_artifacts/",
+            "model_name": "sample_model",
+            "input_dim": m_config["hyperparameters"]["input_dim"],
+            "batch_size": 1,
+            "output_dim": m_config["hyperparameters"]["output_dim"],
+        }
+    )
+
+    a_notifier = ArtifactsNotifier()
+    a_notifier.subscribe(experiment_tracker.artifacts_listener, MLEventType("save_artifacts"))
+    # Uses the ONNX format for encoding our model artifacts
+    artifact_encoder = ONNX(a_config, None)
+    # Wraps the encoder object for comet integration
+    artifact_obj = Artifacts_Saver(artifact_encoder, a_notifier)
     # ------------------------------------------------------
 
     # ---- running section ---------------------------------
     print("************ Start ************")
-    setting_obj.prepare(data_obj, method_obj, result_obj, evaluate_obj)
+    setting_obj.prepare(data_obj, method_obj, result_obj, evaluate_obj, artifact_obj)
     setting_obj.print_setup_summary()
     mean_score, std_score = setting_obj.load_run_save_evaluate()
     print("************ Overall Performance ************")

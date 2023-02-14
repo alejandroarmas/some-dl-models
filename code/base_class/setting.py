@@ -6,6 +6,7 @@ Base SettingModule class for all experiment settings
 # License: TBD
 
 import abc
+from code.base_class.artifacts import artifacts
 from code.base_class.dataset import dataset
 from code.base_class.evaluate import evaluate
 from code.base_class.method import method
@@ -39,6 +40,7 @@ class setting:
     _method: method
     _result: result
     _evaluate: evaluate
+    _artifacts: artifacts
 
     __manager: Optional[SettingNotifier]
 
@@ -48,12 +50,18 @@ class setting:
         self.__manager = manager
 
     def prepare(
-        self, sDataset: dataset, sMethod: method, sResult: result, sEvaluate: evaluate
+        self,
+        sDataset: dataset,
+        sMethod: method,
+        sResult: result,
+        sEvaluate: evaluate,
+        sArtifacts: artifacts,
     ) -> None:
         self._dataset = sDataset
         self._method = sMethod
         self._result = sResult
         self._evaluate = sEvaluate
+        self._artifacts = sArtifacts
 
     def print_setup_summary(self) -> None:
 
@@ -66,6 +74,7 @@ class setting:
                     "setting": self._setting_name,
                     "result": self._result.result_name,
                     "evaluation": self._evaluate.evaluate_name,
+                    "artifacts": self._artifacts.model_name,
                 }
             )
 
@@ -82,6 +91,8 @@ class setting:
             self._result.result_name,
             ", evaluation:",
             self._evaluate.evaluate_name,
+            ", artifacts:",
+            self._artifacts.model_name,
         )
 
     @abc.abstractmethod

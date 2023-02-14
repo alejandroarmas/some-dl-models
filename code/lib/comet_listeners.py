@@ -6,6 +6,7 @@ from code.lib.notifier import (
     ResultNotification,
     SettingNotification,
 )
+from code.lib.notifier.artifacts_notifier import ArtifactsNotification
 from typing import Optional, TypedDict
 
 from comet_ml import Experiment
@@ -101,6 +102,20 @@ class CometDatasetHandler(MLEventListener):
             )
 
 
+class CometArtifactHandler(MLEventListener):
+
+    __experiment: Experiment
+
+    def __init__(self, experiment: Optional[Experiment] = None):
+        if experiment is not None:
+            assert isinstance(experiment, Experiment)
+        self.__experiment = experiment
+
+    def update(self, data: ArtifactsNotification) -> None:
+        if self.__experiment is not None:
+            self.__experiment.log_model("Model_Artifacts", data.filename)
+
+
 class CometConfig(TypedDict):
     api_key: str
     project_name: str
@@ -113,6 +128,7 @@ class CometExperimentTracker:
     result_listener: CometResultHandler
     setting_listener: CometSettingHandler
     dataset_listener: CometDatasetHandler
+    artifacts_listener: CometArtifactHandler
     experiment: Experiment
 
     def __init__(self, config: CometConfig, dry_run: bool = False):
@@ -131,6 +147,7 @@ class CometExperimentTracker:
         self.result_listener = CometResultHandler(self.experiment)
         self.setting_listener = CometSettingHandler(self.experiment)
         self.dataset_listener = CometDatasetHandler(self.experiment)
+        self.artifacts_listener = CometArtifactHandler(self.experiment)
 
     def log_model(self) -> None:
         ...

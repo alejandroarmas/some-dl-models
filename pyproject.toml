@@ -17,6 +17,7 @@ torch = ">=1.13.1"
 scikit-learn = ">=1.2.0"
 torchmetrics = "^0.11.1"
 pandas = "^1.5.3"
+onnx = "^1.13.0"
 
 
 [tool.poetry.group.dev.dependencies]
