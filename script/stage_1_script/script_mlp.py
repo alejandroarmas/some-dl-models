@@ -6,6 +6,8 @@ from code.base_class.method import methodConfig
 from code.base_class.result import resultConfig
 from code.base_class.setting import SettingConfig
 from code.lib.comet_listeners import CometConfig, CometExperimentTracker
+from code.lib.encoding.Artifacts_Saver import Artifacts_Saver
+from code.lib.encoding.onnx_encoder import ONNX
 from code.lib.notifier import (
     DatasetNotifier,
     EvaluateNotifier,
@@ -20,8 +22,6 @@ from code.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
 from code.stage_1_code.Method_MLP import Method_MLP
 from code.stage_1_code.Result_Saver import Result_Saver
 from code.stage_1_code.Setting_Train_Test_Split import Setting_Train_Test_Split
-from code.stage_2_code.Artifacts_Saver import Artifacts_Saver
-from code.stage_2_code.onnx_encoder import ONNX
 
 import numpy as np
 import torch

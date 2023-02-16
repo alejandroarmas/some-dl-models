@@ -1,10 +1,13 @@
 import os
+from code.base_class.artifacts import artifactConfig
 from code.base_class.dataset import datasetConfig
 from code.base_class.evaluate import EvaluateConfig
 from code.base_class.method import methodConfig
 from code.base_class.result import resultConfig
 from code.base_class.setting import SettingConfig
 from code.lib.comet_listeners import CometConfig, CometExperimentTracker
+from code.lib.encoding.Artifacts_Saver import Artifacts_Saver
+from code.lib.encoding.onnx_encoder import ONNX
 from code.lib.notifier import (
     DatasetNotifier,
     EvaluateNotifier,
@@ -13,6 +16,7 @@ from code.lib.notifier import (
     ResultNotifier,
     SettingNotifier,
 )
+from code.lib.notifier.artifacts_notifier import ArtifactsNotifier
 
 # from code.lib.util.device import get_device
 from code.stage_3_code.Dataset_Loader import ValidatedPickleLoader
@@ -107,6 +111,16 @@ def main():
         {"name": "recall", "description": "This is my recall object evaluator"}
     )
 
+    a_config = artifactConfig(
+        {
+            "folder_path": "result/stage_3_artifacts/",
+            "model_name": "MODEL_NAME_HERE",
+            "input_dim": 0,
+            "batch_size": 40,
+            "output_dim": 0,
+        }
+    )
+
     d_notifier = DatasetNotifier()
     d_notifier.subscribe(experiment_tracker.dataset_listener, MLEventType("load"))
     data_obj = ValidatedPickleLoader(d_config, d_notifier)
@@ -136,11 +150,17 @@ def main():
     e_notifier.subscribe(experiment_tracker.evaluation_listener, MLEventType("evaluate"))
     final_evaluation = Evaluate_F1(e_config, e_notifier)
 
+    a_notifier = ArtifactsNotifier()
+    a_notifier.subscribe(experiment_tracker.artifacts_listener, MLEventType("save_artifacts"))
+    # Uses the ONNX format for encoding our model artifacts
+    artifact_encoder = ONNX(a_config, method_obj)
+    # Wraps the encoder object for comet integration
+    artifact_obj = Artifacts_Saver(artifact_encoder, a_notifier)
     # ------------------------------------------------------
 
     # ---- running section ---------------------------------
     print("************ Start ************")
-    setting_obj.prepare(data_obj, method_obj, result_obj, final_evaluation)
+    setting_obj.prepare(data_obj, method_obj, result_obj, final_evaluation, artifact_obj)
     setting_obj.print_setup_summary()
     mean_score, std_score = setting_obj.load_run_save_evaluate()
     print("************ Overall Performance ************")
