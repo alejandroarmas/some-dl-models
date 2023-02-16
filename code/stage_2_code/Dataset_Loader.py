@@ -20,14 +20,14 @@ class Dataset_Loader(dataset):
 
     def load(self) -> dict:
         print("\nloading data...\n")
-
         # read in dataset using pandas
         file_Path = self.dataset_source_folder_path + self.dataset_source_file_name
         # with open(file_Path) as file:
         data_Frame: pd.DataFrame = pd.read_csv(file_Path)
+        print(data_Frame, "\n")
 
         # extract labels and features from dataset ([row_start:row_end , column_start, column_end])
-        X: pd.DataFrame = data_Frame.iloc[:, 1:]
         y: pd.Series = data_Frame.iloc[:, 0]
+        X: pd.DataFrame = data_Frame.iloc[:, 1:]
 
         return {"X": X, "y": y}

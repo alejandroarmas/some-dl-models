@@ -10,12 +10,15 @@ import abc
 from code.lib.notifier import DatasetNotifier
 from typing import Optional, TypedDict
 
+import torch
+
 
 class datasetConfig(TypedDict):
     name: str
     description: str
     source_folder_path: str
     source_file_name: str
+    device: torch.device
 
 
 class dataset:
