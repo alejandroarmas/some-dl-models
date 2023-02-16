@@ -19,12 +19,13 @@ from code.lib.notifier import (
 )
 from typing import Optional, TypedDict
 
-# -----------------------------------------------------
+import torch
 
 
 class SettingConfig(TypedDict):
     name: str
     description: str
+    device: torch.device
 
 
 class setting:
@@ -48,6 +49,7 @@ class setting:
         self._setting_name = config["name"]
         self._setting_description = config["description"]
         self.__manager = manager
+        self.device = config["device"]
 
     def prepare(
         self,

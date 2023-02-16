@@ -25,6 +25,7 @@ from code.stage_2_code.onnx_encoder import ONNX
 
 import numpy as np
 import torch
+from torchmetrics import MetricCollection
 from torchmetrics.classification import (
     BinaryAccuracy,
     BinaryF1Score,
@@ -40,6 +41,7 @@ if 1:
     # ------------------------------------------------------
     # ---- objection initialization setction ---------------
 
+    device = torch.device("cpu")
     algorithm_type = "MLP"
 
     config = CometConfig(
@@ -58,6 +60,7 @@ if 1:
             "description": "...data description...",
             "source_folder_path": "data/stage_1_data/",
             "source_file_name": "toy_data_file.txt",
+            "device": device,
         }
     )
 
@@ -80,6 +83,7 @@ if 1:
         {
             "name": "Setting_Train_Test_Split",
             "description": "This setting enables us to divide our data in sections",
+            "device": device,
         }
     )
 
@@ -93,12 +97,14 @@ if 1:
 
     m_notifier = MethodNotifier()
     m_notifier.subscribe(experiment_tracker.method_listener, MLEventType("method"))
-    batch_metrics = {
-        "accuracy": BinaryAccuracy(),
-        "f1": BinaryF1Score(),
-        "precision": BinaryPrecision(),
-        "recall": BinaryRecall(),
-    }
+    batch_metrics = MetricCollection(
+        [
+            BinaryAccuracy().to(device),
+            BinaryF1Score().to(device),
+            BinaryPrecision().to(device),
+            BinaryRecall().to(device),
+        ]
+    )
 
     method_obj = Method_MLP(m_config, m_notifier, batch_metrics)
 

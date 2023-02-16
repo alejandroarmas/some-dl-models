@@ -24,11 +24,12 @@ from code.stage_2_code.Artifacts_Saver import Artifacts_Saver
 from code.stage_2_code.onnx_encoder import ONNX
 
 import numpy as np
+import torch
 
 # ---- Decision Tree script ----
 if 1:
+    device = torch.device("cpu")
     # ---- parameter section -------------------------------
-    None
     np.random.seed(1)
     # ------------------------------------------------------
 
@@ -50,6 +51,7 @@ if 1:
             "description": "...data description...",
             "source_folder_path": "data/stage_1_data/",
             "source_file_name": "toy_data_file.txt",
+            "device": device,
         }
     )
 
@@ -72,6 +74,7 @@ if 1:
         {
             "name": "Setting_KFold_CV",
             "description": "This setting enables us to divide our data in sections",
+            "device": device,
         }
     )
 

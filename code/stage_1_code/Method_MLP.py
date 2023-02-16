@@ -11,11 +11,12 @@ from code.lib.notifier import (
     MethodNotifier,
     MLEventType,
 )
-from typing import Any, Optional
+from typing import Optional
 
 import numpy as np
 import torch
 from torch import nn
+from torchmetrics import MetricCollection
 
 
 class Method_MLP(method, nn.Module):
@@ -24,7 +25,6 @@ class Method_MLP(method, nn.Module):
     max_epoch = 500
     # it defines the learning rate for gradient descent based optimizer for model learning
     learning_rate = 1e-3
-    metrics: dict[str, Any]
 
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
@@ -33,7 +33,7 @@ class Method_MLP(method, nn.Module):
         self,
         config: methodConfig,
         manager: Optional[MethodNotifier] = None,
-        metrics: Optional[dict] = None,
+        metrics: Optional[MetricCollection] = None,
     ):
         nn.Module.__init__(self)
         method.__init__(self, config, manager, metrics)
@@ -68,6 +68,12 @@ class Method_MLP(method, nn.Module):
         # check here for the nn.CrossEntropyLoss doc: https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
         loss_function = nn.CrossEntropyLoss()
         # for training accuracy investigation purpose
+        names = {
+            "MulticlassAccuracy": "accuracy",
+            "MulticlassF1Score": "f1",
+            "MulticlassPrecision": "precision",
+            "MulticlassRecall": "recall",
+        }
 
         # it will be an iterative gradient updating process
         # we don't do mini-batch, we use the whole input as one batch
@@ -100,7 +106,7 @@ class Method_MLP(method, nn.Module):
                     ClassificationNotification(
                         epoch=epoch,
                         loss=train_loss.item(),
-                        **{n: m.compute() for n, m in self.batch_metrics.items()},
+                        **{names[n]: m.compute() for n, m in self.batch_metrics.items()},
                     ),
                 )
 
@@ -111,7 +117,7 @@ class Method_MLP(method, nn.Module):
                     "Loss:",
                     train_loss.item(),
                     "Metrics:",
-                    {k: m.compute().item() for k, m in self.batch_metrics.items()},
+                    {names[k]: m.compute().item() for k, m in self.batch_metrics.items()},
                 )
 
     def test(self, X):

@@ -9,6 +9,8 @@ import abc
 from code.lib.notifier import MethodNotifier
 from typing import Optional, TypedDict
 
+from torchmetrics import MetricCollection
+
 
 class methodConfig(TypedDict):
     name: str
@@ -40,7 +42,7 @@ class method:
     data = None
     notification_manager: Optional[MethodNotifier]
 
-    batch_metrics: Optional[dict]
+    batch_metrics: Optional[MetricCollection]
     method_start_time = None
     method_stop_time = None
     method_running_time = None
@@ -52,7 +54,7 @@ class method:
         self,
         config: methodConfig,
         manager: Optional[MethodNotifier] = None,
-        metrics: Optional[dict] = None,
+        metrics: Optional[MetricCollection] = None,
     ):
         self.method_name = config["name"]
         self.method_description = config["description"]

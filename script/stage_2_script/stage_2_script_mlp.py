@@ -25,6 +25,7 @@ from code.stage_2_code.Setting_Train_Test_Split import Setting_Train_Test_Split
 
 import numpy as np
 import torch
+from torchmetrics import MetricCollection
 from torchmetrics.classification import (
     MulticlassAccuracy,
     MulticlassF1Score,
@@ -39,6 +40,7 @@ if 1:
     torch.manual_seed(2)
     # ------------------------------------------------------
     # ---- objection initialization setction ---------------
+    device: torch.device = torch.device("cpu")
 
     algorithm_type = "MLP"
 
@@ -58,6 +60,7 @@ if 1:
             "description": "...data description...",
             "source_folder_path": "data/stage_2_data/",
             "source_file_name": "train.csv",
+            "device": device,
         }
     )
 
@@ -88,6 +91,7 @@ if 1:
         {
             "name": "Setting_Train_Test_Split",
             "description": "This setting enables us to divide our data in sections",
+            "device": device,
         }
     )
 
@@ -111,13 +115,14 @@ if 1:
 
     m_notifier = MethodNotifier()
     m_notifier.subscribe(experiment_tracker.method_listener, MLEventType("method"))
-    batch_metrics = {
-        "accuracy": MulticlassAccuracy(num_classes=m_config["hyperparameters"]["output_dim"]),
-        "f1": MulticlassF1Score(num_classes=m_config["hyperparameters"]["output_dim"]),
-        "precision": MulticlassPrecision(num_classes=m_config["hyperparameters"]["output_dim"]),
-        "recall": MulticlassRecall(num_classes=m_config["hyperparameters"]["output_dim"]),
-    }
-
+    batch_metrics = MetricCollection(
+        [
+            MulticlassAccuracy(num_classes=m_config["hyperparameters"]["output_dim"]).to(device),
+            MulticlassF1Score(num_classes=m_config["hyperparameters"]["output_dim"]).to(device),
+            MulticlassPrecision(num_classes=m_config["hyperparameters"]["output_dim"]).to(device),
+            MulticlassRecall(num_classes=m_config["hyperparameters"]["output_dim"]).to(device),
+        ]
+    )
     method_obj = Method_MLP(m_config, m_notifier, batch_metrics)
 
     r_notifier = ResultNotifier()
