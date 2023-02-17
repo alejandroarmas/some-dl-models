@@ -1,4 +1,8 @@
 from code.base_class.notifier import MLEventNotifier, MLEventType
+from code.lib.notifier.artifacts_notifier import (
+    ArtifactsNotification,
+    ArtifactsNotifier,
+)
 from code.lib.notifier.dataset_notifier import (
     DatasetNotification,
     DatasetNotifier,
