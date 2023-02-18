@@ -83,7 +83,7 @@ class ValidatedPickleLoader(dataset):
         self.samples_to_verify = _samples_to_verify
         self.device = config["device"]
 
-    def load(self, deactivateReorder = False) -> dict:
+    def load(self, deactivateReorder=False) -> dict:
 
         data = self.real_loader.load()
 
@@ -108,7 +108,7 @@ class ValidatedPickleLoader(dataset):
         v.validate(batch)
 
         # disables reordering of axes in dataset
-        if deactivateReorder: 
+        if deactivateReorder:
             return {
                 "X_train": torch.FloatTensor(
                     np.array([example["image"] for example in data["train"]])

@@ -37,6 +37,7 @@ from torchmetrics.classification import (
 
 # ---- Convolutional - Neural - Network script ----
 
+
 def main():
     # ---- parameter section -------------------------------
     np.random.seed(2)
@@ -94,7 +95,6 @@ def main():
                 "output_dim_0": 20,
                 "output_dim_1": 10,
                 "image_size": 28,
-                
             },
         }
     )
@@ -107,7 +107,7 @@ def main():
     )
 
     e_config = EvaluateConfig(
-        {"name": "recall", 
+        {"name": "recall",
          "description": "This is my recall object evaluator"}
     )
 
@@ -115,10 +115,9 @@ def main():
         {
             "folder_path": "result/stage_3_artifacts/",
             "model_name": "MNIST_CNN",
-            "input_dim": 28 * 28,
             "batch_size": 50,
             "output_dim": 10,
-            "input_dim": (1,28,28),
+            "input_dim": (1, 28, 28),
         }
     )
 
