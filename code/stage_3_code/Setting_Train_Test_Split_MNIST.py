@@ -27,9 +27,6 @@ class Setting_Train_Test_Split(setting):
             "test": {"X": loaded_data["X_test"], "y": loaded_data["y_test"]},
         }
 
-        loaded_data["y_train"] = torch.sub(loaded_data["y_train"], 1)
-        loaded_data["y_test"] = torch.sub(loaded_data["y_test"], 1)
-
         transformations = transforms.Compose(
             [
                 transforms.ToPILImage(),
@@ -40,9 +37,7 @@ class Setting_Train_Test_Split(setting):
                 # Randomly adjust color jitter of the images
                 transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1),
                 # Randomly adjust sharpness
-                transforms.RandomAdjustSharpness(
-                    sharpness_factor=2, p=0.1
-                ),  
+                transforms.RandomAdjustSharpness(sharpness_factor=2, p=0.1),  
                 transforms.RandomErasing(p=0.75, scale=(0.02, 0.1), value=1.0, inplace=False),
                 transforms.ToTensor(),
                 # These values are mostly used by researchers as found to very useful in fast convergence
@@ -51,10 +46,10 @@ class Setting_Train_Test_Split(setting):
         )
 
         training_dataset = LoadedDataset(
-            loaded_data["X_train"], loaded_data["y_train"], transform=transformations, toByte=True
+            loaded_data["X_train"], loaded_data["y_train"],
         )
         testing_dataset = LoadedDataset(
-            loaded_data["X_test"], loaded_data["y_test"], transform=transformations, toByte=True
+            loaded_data["X_test"], loaded_data["y_test"],
         )
 
         testing_dataloader = DataLoader(

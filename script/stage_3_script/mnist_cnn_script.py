@@ -57,7 +57,7 @@ def main():
         }
     )
 
-    experiment_tracker = CometExperimentTracker(config, dry_run=True)
+    experiment_tracker = CometExperimentTracker(config, dry_run=False)
 
     d_config = datasetConfig(
         {
@@ -82,7 +82,7 @@ def main():
             "name": f"{algorithm_type}-method",
             "description": "This is a convolutional neural network",
             "hyperparameters": {
-                "max_epoch": 500,
+                "max_epoch": 10,
                 "learning_rate": 1e-3,
                 "conv_channels_in_dim": 1,
                 "conv_channels_out_dim_0": 3,
@@ -93,6 +93,7 @@ def main():
                 "batch_size": 50,
                 "output_dim_0": 20,
                 "output_dim_1": 10,
+                "image_size": 28,
                 
             },
         }
@@ -117,6 +118,7 @@ def main():
             "input_dim": 28 * 28,
             "batch_size": 50,
             "output_dim": 10,
+            "input_dim": (1,28,28),
         }
     )
 
