@@ -17,7 +17,7 @@ class ONNX(artifacts):
     def serialize(self) -> None:
 
         filename = f"{self.folder_path}{self.model_name}{self.extension}"
-        dummy_X = torch.randn(self.batch_size, *self.input_dim)
+        dummy_X = torch.randn(self.batch_size, *self.input_dim)        
         input_names = ["actual_input"]
         output_names = ["output"]
         if self.model is not None:

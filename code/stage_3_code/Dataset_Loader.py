@@ -37,7 +37,8 @@ class LoadedDataset(Dataset):
         sample = {"image": image, "label": label}
 
         # convert tensor to bytes (if needed)
-        sample["image"] = self.transform(sample["image"].byte()) if self.transform and self.toByte else self.transform(sample["image"])
+        if self.transform is not None:
+            sample["image"] = self.transform(sample["image"].byte()) if self.transform and self.toByte else self.transform(sample["image"])
 
         return sample
 
@@ -109,13 +110,13 @@ class ValidatedPickleLoader(dataset):
         # disables reordering of axes in dataset
         if deactivateReorder: 
             return {
-                "X_train": torch.LongTensor(
+                "X_train": torch.FloatTensor(
                     np.array([example["image"] for example in data["train"]])
                 ).to(self.device),
                 "y_train": torch.LongTensor(
                     np.array([example["label"] for example in data["train"]])
                 ).to(self.device),
-                "X_test": torch.LongTensor(
+                "X_test": torch.FloatTensor(
                     np.array([example["image"] for example in data["test"]])
                 ).to(self.device),
                 "y_test": torch.LongTensor(
