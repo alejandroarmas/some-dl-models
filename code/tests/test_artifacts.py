@@ -24,7 +24,7 @@ class TestArtifacts(unittest.TestCase):
                 "hyperparameters": {
                     "max_epoch": 10,
                     "learning_rate": 5e-3,
-                    "input_dim": 10,
+                    "input_dim": (10),
                     "hidden_dim_0": 8,
                     "hidden_dim_1": 4,
                     "output_dim": 2,
