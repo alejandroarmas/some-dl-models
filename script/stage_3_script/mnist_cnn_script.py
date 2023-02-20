@@ -83,14 +83,14 @@ def main():
             "name": f"{algorithm_type}-method",
             "description": "This is a convolutional neural network",
             "hyperparameters": {
-                "max_epoch": 10,
+                "max_epoch": 49,
                 "learning_rate": 1e-3,
                 "conv_channels_in_dim": 1,
                 "conv_channels_out_dim_0": 3,
                 "conv_channels_out_dim_1": 9,
                 "conv_kernel_size": 5,
                 "pool_kernel_size": 2,
-                "pool_stride": 2,
+                "pool_stride": 1,
                 "batch_size": 50,
                 "output_dim_0": 20,
                 "output_dim_1": 10,
@@ -115,7 +115,7 @@ def main():
         {
             "folder_path": "result/stage_3_artifacts/",
             "model_name": "MNIST_CNN",
-            "batch_size": 50,
+            "batch_size": (50),
             "output_dim": 10,
             "input_dim": (1, 28, 28),
         }
