@@ -38,8 +38,6 @@ from torchmetrics.classification import (
     MulticlassRecall,
 )
 
-# from queue import SimpleQueue
-
 # ---- Convolutional - Neural - Network script ----
 
 
@@ -55,7 +53,6 @@ class MasterConfig:
 
 
 def main():
-    # queue = SimpleQueue()
 
     device: torch.device = torch.device("cpu")
 
@@ -84,26 +81,28 @@ def main():
         {
             "name": f"{dataset_name}-{algorithm_type}-result",
             "description": "...data description...",
-            "destination_folder_path": f"result/stage_3_result/{algorithm_type}_",
+            "destination_folder_path": f"result/stage_3_result/{algorithm_type}2_",
             "destination_file_name": "prediction_result",
         }
     )
 
-    m_config_0 = methodConfig(
+    m_config = methodConfig(  # 84.5
         {
             "name": f"{algorithm_type}-method",
             "description": "This is a convolutional neural network",
             "hyperparameters": {
-                "max_epoch": 5,
+                "max_epoch": 72,  # was 36
                 "learning_rate": 1e-3,
+                "image_size": 112,
+                "image_size2": 92,
                 "conv_channels_in_dim": 1,
                 "conv_channels_out_dim_0": 3,
-                "conv_channels_out_dim_1": 9,
-                "conv_kernel_size": 5,
+                "conv_channels_out_dim_1": 5,
+                "conv_kernel_size": 3,
                 "pool_kernel_size": 2,
                 "pool_stride": 2,
                 "batch_size": 10,
-                "output_dim_0": 80,
+                "output_dim_0": 90,
                 "output_dim_1": 40,
             },
         }
@@ -124,15 +123,15 @@ def main():
     a_config = artifactConfig(
         {
             "folder_path": "result/stage_3_artifacts/",
-            "model_name": "ORL_CNN",
-            "input_dim": 112 * 92,
+            "model_name": "ORL_CNN2",
+            "input_dim": (1, 112, 92),
             "batch_size": 10,
             "output_dim": 40,
         }
     )
 
-    config1 = MasterConfig(config, d_config, r_config, m_config_0, s_config, e_config, a_config)
-    # queue.put(config1)
+    config1 = MasterConfig(config, d_config, r_config, m_config, s_config, e_config, a_config)
+
     runExperiment(config1)
 
 
@@ -155,7 +154,7 @@ def runExperiment(masterConfig):
     e_config = masterConfig.e_config
     a_config = masterConfig.a_config
 
-    experiment_tracker = CometExperimentTracker(config, dry_run=True)
+    experiment_tracker = CometExperimentTracker(config, dry_run=False)
 
     d_notifier = DatasetNotifier()
     d_notifier.subscribe(experiment_tracker.dataset_listener, MLEventType("load"))

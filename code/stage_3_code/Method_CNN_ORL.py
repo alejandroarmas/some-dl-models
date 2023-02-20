@@ -1,6 +1,7 @@
 """
 Concrete MethodModule class for a specific learning MethodModule
 """
+import math
 from code.base_class.method import method, methodConfig
 from code.lib.notifier import (
     ClassificationNotification,
@@ -42,7 +43,6 @@ class MethodCNN_ORL(method, nn.Module):
             in_channels=p["conv_channels_in_dim"],
             out_channels=p["conv_channels_out_dim_0"],
             kernel_size=p["conv_kernel_size"],
-            padding="valid",
         )
         self.max_pool = nn.MaxPool2d(
             kernel_size=p["pool_kernel_size"],
@@ -52,11 +52,29 @@ class MethodCNN_ORL(method, nn.Module):
             in_channels=p["conv_channels_out_dim_0"],
             out_channels=p["conv_channels_out_dim_1"],
             kernel_size=p["conv_kernel_size"],
-            padding="valid",
         )
 
-        # how to not hardcode this??
-        self.input_dim_0 = p["conv_channels_out_dim_1"] * 25 * 20
+        # floor[(W−K+2P)/S] + 1
+        feature_map_size_0 = p["image_size"] - p["conv_kernel_size"] + 1
+        feature_map_size_1 = (
+            math.floor((feature_map_size_0 - p["pool_kernel_size"]) / p["pool_stride"]) + 1
+        )
+        feature_map_size_2 = feature_map_size_1 - p["conv_kernel_size"] + 1
+        feature_map_size_3 = (
+            math.floor((feature_map_size_2 - p["pool_kernel_size"]) / p["pool_stride"]) + 1
+        )
+
+        feature_map_size2_0 = p["image_size2"] - p["conv_kernel_size"] + 1
+        feature_map_size2_1 = (
+            math.floor((feature_map_size2_0 - p["pool_kernel_size"]) / p["pool_stride"]) + 1
+        )
+        feature_map_size2_2 = feature_map_size2_1 - p["conv_kernel_size"] + 1
+        feature_map_size2_3 = (
+            math.floor((feature_map_size2_2 - p["pool_kernel_size"]) / p["pool_stride"]) + 1
+        )
+
+        self.input_dim_0 = p["conv_channels_out_dim_1"] * feature_map_size2_3 * feature_map_size_3
+
         self.fc1 = nn.Linear(self.input_dim_0, p["output_dim_0"])
         self.fc2 = nn.Linear(p["output_dim_0"], p["output_dim_1"])
         self.learning_rate = p["learning_rate"]
@@ -67,7 +85,6 @@ class MethodCNN_ORL(method, nn.Module):
     def forward(self, x):
         out = self.max_pool(F.relu(self.conv_layer1(x)))
         out = self.max_pool(F.relu(self.conv_layer2(out)))
-
         out = out.view(self.batch_size, self.input_dim_0)
 
         out = F.relu(self.fc1(out))
@@ -94,7 +111,7 @@ class MethodCNN_ORL(method, nn.Module):
 
             for idx, batch in enumerate(self.training_loader):
                 y_pred = self.forward(batch["image"])
-
+                print(batch["image"])
                 train_loss = loss_function(y_pred, batch["label"])
 
                 optimizer.zero_grad()
@@ -136,8 +153,6 @@ class MethodCNN_ORL(method, nn.Module):
         with torch.no_grad():
             for batch in self.testing_loader:
                 y_pred = self.test(batch["image"])
-                print(y_pred)
-                print(batch["label"])
                 self.batch_metrics.update(batch["label"], y_pred)
             accumulated_loss = self.batch_metrics.compute()
             print(f"{accumulated_loss.items()=}")
