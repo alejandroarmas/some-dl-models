@@ -8,9 +8,8 @@ class artifactConfig(TypedDict):
     folder_path: str
     model_name: str
     batch_size: int
-    input_dim: Tuple
+    input_dim: Tuple[int, ...]
     output_dim: int
-    # potentially more metadata or better generalization needed later
 
 
 class artifacts(ABC):
