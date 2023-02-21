@@ -2,8 +2,8 @@ import os
 import unittest
 from code.base_class.artifacts import artifactConfig
 from code.base_class.method import methodConfig
+from code.lib.encoding.onnx_encoder import ONNX
 from code.stage_2_code.Method_MLP import Method_MLP
-from code.stage_2_code.onnx_encoder import ONNX
 
 import numpy as np
 import onnx
@@ -35,7 +35,7 @@ class TestArtifacts(unittest.TestCase):
             {
                 "folder_path": "code/tests/testfiles/",
                 "model_name": "smol_model",
-                "input_dim": m_config["hyperparameters"]["input_dim"],
+                "input_dim": (m_config["hyperparameters"]["input_dim"],),
                 "batch_size": 1,
                 "output_dim": m_config["hyperparameters"]["output_dim"],
             }

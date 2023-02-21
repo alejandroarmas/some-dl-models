@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, TypedDict
+from typing import Optional, Tuple, TypedDict
 
 from torch import nn
 
@@ -8,9 +8,8 @@ class artifactConfig(TypedDict):
     folder_path: str
     model_name: str
     batch_size: int
-    input_dim: int
+    input_dim: Tuple[int, ...]
     output_dim: int
-    # potentially more metadata or better generalization needed later
 
 
 class artifacts(ABC):
@@ -18,7 +17,7 @@ class artifacts(ABC):
     model_name: str
     extension: str
     batch_size: int
-    input_dim: int
+    input_dim: Tuple
     output_dim: int
 
     model: Optional[nn.Module]
