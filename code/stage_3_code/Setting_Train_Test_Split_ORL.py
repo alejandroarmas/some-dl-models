@@ -66,7 +66,6 @@ class Setting_Train_Test_Split_ORL(setting):
         self._method.training_loader = training_dataloader
         self._method.testing_loader = testing_dataloader
 
-        print(f'{self._method.data["train"]["X"].shape=}')
         learned_result = self._method.run()
 
         # save raw ResultModule

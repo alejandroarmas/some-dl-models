@@ -123,7 +123,7 @@ def main():
     a_config = artifactConfig(
         {
             "folder_path": "result/stage_3_artifacts/",
-            "model_name": "ORL_CNN2",
+            "model_name": "test",
             "input_dim": (1, 112, 92),
             "batch_size": 10,
             "output_dim": 40,

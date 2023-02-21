@@ -111,7 +111,6 @@ class MethodCNN_ORL(method, nn.Module):
 
             for idx, batch in enumerate(self.training_loader):
                 y_pred = self.forward(batch["image"])
-                print(batch["image"])
                 train_loss = loss_function(y_pred, batch["label"])
 
                 optimizer.zero_grad()
