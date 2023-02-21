@@ -81,12 +81,11 @@ def main():
         {
             "name": f"{dataset_name}-{algorithm_type}-result",
             "description": "...data description...",
-            "destination_folder_path": f"result/stage_3_result/{algorithm_type}2_",
+            "destination_folder_path": f"result/stage_3_result/{algorithm_type}_",
             "destination_file_name": "prediction_result",
         }
     )
-
-    m_config = methodConfig(  # 84.5
+    m_config = methodConfig(
         {
             "name": f"{algorithm_type}-method",
             "description": "This is a convolutional neural network",
@@ -107,7 +106,6 @@ def main():
             },
         }
     )
-
     s_config = SettingConfig(
         {
             "name": "Setting_Train_Test_Split_ORL",
