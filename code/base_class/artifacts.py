@@ -40,4 +40,3 @@ class artifacts(ABC):
     @abstractmethod
     def deserialize(self) -> nn.Module:
         ...
-        
