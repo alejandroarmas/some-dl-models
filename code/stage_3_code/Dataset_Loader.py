@@ -18,12 +18,13 @@ from torch.utils.data import Dataset
 
 
 class LoadedDataset(Dataset):
-    def __init__(self, X, y, transform=None, train=True):
+    def __init__(self, X, y, transform=None, train=True, toByte=False):
 
         self.X = X
         self.y = y
         self.transform = transform
         self.train = train
+        self.toByte = toByte
 
     def __len__(self):
         return len(self.X)
@@ -35,8 +36,9 @@ class LoadedDataset(Dataset):
 
         sample = {"image": image, "label": label}
 
-        if self.transform:
-            sample["image"] = self.transform(sample["image"])
+        # convert tensor to bytes (if needed)
+        if self.transform is not None:
+            sample["image"] = self.transform(sample["image"].byte()) if self.transform and self.toByte else self.transform(sample["image"])
 
         return sample
 
@@ -81,7 +83,7 @@ class ValidatedPickleLoader(dataset):
         self.samples_to_verify = _samples_to_verify
         self.device = config["device"]
 
-    def load(self) -> dict:
+    def load(self, deactivateReorder=False) -> dict:
 
         data = self.real_loader.load()
 
@@ -104,6 +106,23 @@ class ValidatedPickleLoader(dataset):
         }
 
         v.validate(batch)
+
+        # disables reordering of axes in dataset
+        if deactivateReorder:
+            return {
+                "X_train": torch.FloatTensor(
+                    np.array([example["image"] for example in data["train"]])
+                ).to(self.device),
+                "y_train": torch.LongTensor(
+                    np.array([example["label"] for example in data["train"]])
+                ).to(self.device),
+                "X_test": torch.FloatTensor(
+                    np.array([example["image"] for example in data["test"]])
+                ).to(self.device),
+                "y_test": torch.LongTensor(
+                    np.array([example["label"] for example in data["test"]])
+                ).to(self.device),
+            }
 
         return {
             "X_train": torch.FloatTensor(
