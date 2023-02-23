@@ -35,7 +35,7 @@ from torchmetrics.classification import (
     MulticlassRecall,
 )
 
-# ---- Convolutional - Neural - Network script ----
+# --- Convolutional - Neural - Network script ----
 
 
 def main():
