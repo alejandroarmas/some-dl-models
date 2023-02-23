@@ -38,7 +38,11 @@ class LoadedDataset(Dataset):
 
         # convert tensor to bytes (if needed)
         if self.transform is not None:
-            sample["image"] = self.transform(sample["image"].byte()) if self.transform and self.toByte else self.transform(sample["image"])
+            sample["image"] = (
+                self.transform(sample["image"].byte())
+                if self.transform and self.toByte
+                else self.transform(sample["image"])
+            )
 
         return sample
 

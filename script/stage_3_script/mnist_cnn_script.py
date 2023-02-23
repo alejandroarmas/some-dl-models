@@ -23,7 +23,9 @@ from code.stage_3_code.Dataset_Loader import ValidatedPickleLoader
 from code.stage_3_code.Evaluate_F1 import Evaluate_F1
 from code.stage_3_code.Method_CNN_MNIST import MethodCNN
 from code.stage_3_code.Result_Saver import Result_Saver
-from code.stage_3_code.Setting_Train_Test_Split_MNIST import Setting_Train_Test_Split
+from code.stage_3_code.Setting_Train_Test_Split_MNIST import (
+    Setting_Train_Test_Split,
+)
 
 import numpy as np
 import torch
@@ -107,8 +109,7 @@ def main():
     )
 
     e_config = EvaluateConfig(
-        {"name": "recall",
-         "description": "This is my recall object evaluator"}
+        {"name": "recall", "description": "This is my recall object evaluator"}
     )
 
     a_config = artifactConfig(

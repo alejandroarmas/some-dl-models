@@ -1,6 +1,7 @@
 """
 Concrete MethodModule class for a specific learning MethodModule
 """
+import math
 from code.base_class.method import method, methodConfig
 from code.lib.notifier import (
     ClassificationNotification,
@@ -9,7 +10,6 @@ from code.lib.notifier import (
 )
 from typing import Optional
 
-import math
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -55,12 +55,15 @@ class MethodCNN(method, nn.Module):
         )
 
         # floor[(W−K+2P)/S] + 1
-        feature_map_size_0 = p['image_size'] - p["conv_kernel_size"] + 1
-        feature_map_size_1 = math.floor((feature_map_size_0 - p["pool_kernel_size"])/p['pool_stride']) + 1
+        feature_map_size_0 = p["image_size"] - p["conv_kernel_size"] + 1
+        feature_map_size_1 = (
+            math.floor((feature_map_size_0 - p["pool_kernel_size"]) / p["pool_stride"]) + 1
+        )
         feature_map_size_2 = feature_map_size_1 - p["conv_kernel_size"] + 1
-        feature_map_size_3 = math.floor((feature_map_size_2 - p["pool_kernel_size"])/p['pool_stride']) + 1
-        self.input_dim_0 = (
-            p["conv_channels_out_dim_1"] * feature_map_size_3 * feature_map_size_3)
+        feature_map_size_3 = (
+            math.floor((feature_map_size_2 - p["pool_kernel_size"]) / p["pool_stride"]) + 1
+        )
+        self.input_dim_0 = p["conv_channels_out_dim_1"] * feature_map_size_3 * feature_map_size_3
         self.fc1 = nn.Linear(self.input_dim_0, p["output_dim_0"])
         self.fc2 = nn.Linear(p["output_dim_0"], p["output_dim_1"])
         self.learning_rate = p["learning_rate"]

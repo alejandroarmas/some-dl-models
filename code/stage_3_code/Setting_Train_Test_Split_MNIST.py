@@ -26,10 +26,12 @@ class Setting_Train_Test_Split(setting):
         }
 
         training_dataset = LoadedDataset(
-            loaded_data["X_train"], loaded_data["y_train"],
+            loaded_data["X_train"],
+            loaded_data["y_train"],
         )
         testing_dataset = LoadedDataset(
-            loaded_data["X_test"], loaded_data["y_test"],
+            loaded_data["X_test"],
+            loaded_data["y_test"],
         )
 
         testing_dataloader = DataLoader(
