@@ -58,7 +58,7 @@ def main():
         }
     )
 
-    experiment_tracker = CometExperimentTracker(config, dry_run=False)
+    experiment_tracker = CometExperimentTracker(config, dry_run=True)
 
     d_config = datasetConfig(
         {

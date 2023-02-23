@@ -152,7 +152,7 @@ def runExperiment(masterConfig):
     e_config = masterConfig.e_config
     a_config = masterConfig.a_config
 
-    experiment_tracker = CometExperimentTracker(config, dry_run=False)
+    experiment_tracker = CometExperimentTracker(config, dry_run=True)
 
     d_notifier = DatasetNotifier()
     d_notifier.subscribe(experiment_tracker.dataset_listener, MLEventType("load"))
