@@ -25,7 +25,7 @@ lint:
 	poetry run black .
 	poetry run flake8
 	poetry run python -m isort .
-	poetry run mypy --ignore-missing-imports .
+	poetry run mypy .
 
 
 test:
