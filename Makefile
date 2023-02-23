@@ -17,6 +17,15 @@ stage_2:
 	poetry run python -m script.stage_2_script.stage_2_script_mlp
 	poetry run python -m script.stage_2_script.stage_2_load_result
 
+stage_3_cifar:
+	poetry run python -m script.stage_3_script.cifar_cnn_script 
+
+stage_3_mnist:
+	poetry run python -m script.stage_3_script.mnist_cnn_script 
+
+stage_3_orl:
+	poetry run python -m script.stage_3_script.orl_cnn_script 
+
 setup:
 	poetry run pre-commit install
 
