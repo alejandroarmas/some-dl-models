@@ -17,11 +17,15 @@ from code.lib.notifier import (
     SettingNotifier,
 )
 from code.lib.notifier.artifacts_notifier import ArtifactsNotifier
-from code.stage_2_code.Dataset_Loader import Dataset_Loader
-from code.stage_2_code.Evaluate_F1 import Evaluate_F1
-from code.stage_2_code.Method_MLP import Method_MLP
-from code.stage_2_code.Result_Saver import Result_Saver
-from code.stage_2_code.Setting_Train_Test_Split import Setting_Train_Test_Split
+
+# from code.lib.util.device import get_device
+from code.stage_3_code.Dataset_Loader import ValidatedPickleLoader
+from code.stage_3_code.Evaluate_F1 import Evaluate_F1
+from code.stage_3_code.Method_CNN_MNIST import MethodCNN
+from code.stage_3_code.Result_Saver import Result_Saver
+from code.stage_3_code.Setting_Train_Test_Split_MNIST import (
+    Setting_Train_Test_Split,
+)
 
 import numpy as np
 import torch
@@ -33,16 +37,20 @@ from torchmetrics.classification import (
     MulticlassRecall,
 )
 
-# ---- Multi-Layer Perceptron script ----
-if 1:
+# --- Convolutional - Neural - Network script ----
+
+
+def main():
     # ---- parameter section -------------------------------
     np.random.seed(2)
     torch.manual_seed(2)
     # ------------------------------------------------------
     # ---- objection initialization setction ---------------
+
     device: torch.device = torch.device("cpu")
 
-    algorithm_type = "MLP"
+    algorithm_type = "CNN"
+    dataset_name = "MNIST"
 
     config = CometConfig(
         {
@@ -52,44 +60,49 @@ if 1:
         }
     )
 
-    experiment_tracker = CometExperimentTracker(config, dry_run=False)
+    experiment_tracker = CometExperimentTracker(config, dry_run=True)
 
     d_config = datasetConfig(
         {
-            "name": "toy",
-            "description": "...data description...",
-            "source_folder_path": "data/stage_2_data/",
-            "source_file_name": "train.csv",
+            "name": dataset_name,
+            "description": "Training set size: 60,000, testing set size: 10,000, number of classes: 10. Each instance is a 28x28 gray image, and will have one single class label denoted by an integer from {0, 1, …, 9}.",
+            "source_folder_path": "data/stage_3_data/",
+            "source_file_name": dataset_name,
             "device": device,
         }
     )
 
     r_config = resultConfig(
         {
-            "name": "toy",
-            "description": "...data description...",
-            "destination_folder_path": f"result/stage_2_result/{algorithm_type}_",
+            "name": f"{dataset_name}-{algorithm_type}-result",
+            "description": "Training set size: 60,000, testing set size: 10,000, number of classes: 10. Each instance is a 28x28 gray image, and will have one single class label denoted by an integer from {0, 1, …, 9}.",
+            "destination_folder_path": f"result/stage_3_result/{algorithm_type}_",
             "destination_file_name": "prediction_result",
         }
     )
     m_config = methodConfig(
         {
             "name": f"{algorithm_type}-method",
-            "description": "This is a multilayer perceptron",
+            "description": "This is a convolutional neural network",
             "hyperparameters": {
-                "max_epoch": 500,
-                "learning_rate": 5e-3,
-                "input_dim": 784,
-                "hidden_dim_0": 256,
-                "hidden_dim_1": 64,
-                "output_dim": 10,
+                "max_epoch": 49,
+                "learning_rate": 1e-3,
+                "conv_channels_in_dim": 1,
+                "conv_channels_out_dim_0": 3,
+                "conv_channels_out_dim_1": 9,
+                "conv_kernel_size": 5,
+                "pool_kernel_size": 2,
+                "pool_stride": 1,
+                "batch_size": 50,
+                "output_dim_0": 20,
+                "output_dim_1": 10,
+                "image_size": 28,
             },
         }
     )
-
     s_config = SettingConfig(
         {
-            "name": "Setting_Train_Test_Split",
+            "name": "Setting_Train_Test_Split_MNIST",
             "description": "This setting enables us to divide our data in sections",
             "device": device,
         }
@@ -101,29 +114,30 @@ if 1:
 
     a_config = artifactConfig(
         {
-            "folder_path": "result/stage_2_artifacts/",
-            "model_name": "sample_model",
-            "input_dim": m_config["hyperparameters"]["input_dim"],
-            "batch_size": 1,
-            "output_dim": m_config["hyperparameters"]["output_dim"],
+            "folder_path": "result/stage_3_artifacts/",
+            "model_name": "MNIST_CNN",
+            "batch_size": (50),
+            "output_dim": 10,
+            "input_dim": (1, 28, 28),
         }
     )
 
     d_notifier = DatasetNotifier()
     d_notifier.subscribe(experiment_tracker.dataset_listener, MLEventType("load"))
-    data_obj = Dataset_Loader(d_config, d_notifier)
+    data_obj = ValidatedPickleLoader(d_config, d_notifier)
 
     m_notifier = MethodNotifier()
     m_notifier.subscribe(experiment_tracker.method_listener, MLEventType("method"))
     batch_metrics = MetricCollection(
         [
-            MulticlassAccuracy(num_classes=m_config["hyperparameters"]["output_dim"]).to(device),
-            MulticlassF1Score(num_classes=m_config["hyperparameters"]["output_dim"]).to(device),
-            MulticlassPrecision(num_classes=m_config["hyperparameters"]["output_dim"]).to(device),
-            MulticlassRecall(num_classes=m_config["hyperparameters"]["output_dim"]).to(device),
+            MulticlassAccuracy(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
+            MulticlassF1Score(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
+            MulticlassPrecision(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
+            MulticlassRecall(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
         ]
     )
-    method_obj = Method_MLP(m_config, m_notifier, batch_metrics)
+
+    method_obj = MethodCNN(m_config, m_notifier, batch_metrics)
 
     r_notifier = ResultNotifier()
     r_notifier.subscribe(experiment_tracker.result_listener, MLEventType("save"))
@@ -133,17 +147,16 @@ if 1:
     s_notifier.subscribe(experiment_tracker.setting_listener, MLEventType("setting"))
     setting_obj = Setting_Train_Test_Split(s_config, s_notifier)
 
+    e_notifier = EvaluateNotifier()
+    e_notifier.subscribe(experiment_tracker.evaluation_listener, MLEventType("evaluate"))
+    final_evaluation = Evaluate_F1(e_config, e_notifier)
+
     a_notifier = ArtifactsNotifier()
     a_notifier.subscribe(experiment_tracker.artifacts_listener, MLEventType("save_artifacts"))
     # Uses the ONNX format for encoding our model artifacts
     artifact_encoder = ONNX(a_config, method_obj)
     # Wraps the encoder object for comet integration
     artifact_obj = Artifacts_Saver(artifact_encoder, a_notifier)
-
-    e_notifier = EvaluateNotifier()
-    e_notifier.subscribe(experiment_tracker.evaluation_listener, MLEventType("evaluate"))
-    final_evaluation = Evaluate_F1(e_config, e_notifier)
-
     # ------------------------------------------------------
 
     # ---- running section ---------------------------------
@@ -152,6 +165,10 @@ if 1:
     setting_obj.print_setup_summary()
     mean_score, std_score = setting_obj.load_run_save_evaluate()
     print("************ Overall Performance ************")
-    print("MLP Accuracy: " + str(mean_score) + " +/- " + str(std_score))
+    print(f"{algorithm_type} Accuracy: " + str(mean_score) + " +/- " + str(std_score))
     print("************ Finish ************")
     # ------------------------------------------------------
+
+
+if __name__ == "__main__":
+    main()

@@ -5,6 +5,8 @@ from code.base_class.evaluate import EvaluateConfig
 from code.base_class.result import resultConfig
 from code.base_class.setting import SettingConfig
 from code.lib.comet_listeners import CometConfig, CometExperimentTracker
+from code.lib.encoding.Artifacts_Saver import Artifacts_Saver
+from code.lib.encoding.onnx_encoder import ONNX
 from code.lib.notifier import (
     DatasetNotifier,
     EvaluateNotifier,
@@ -19,14 +21,13 @@ from code.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
 from code.stage_1_code.Method_SVM import Method_SVM, methodConfigSVM
 from code.stage_1_code.Result_Saver import Result_Saver
 from code.stage_1_code.Setting_KFold_CV import Setting_KFold_CV
-from code.stage_2_code.Artifacts_Saver import Artifacts_Saver
-from code.stage_2_code.onnx_encoder import ONNX
 
 import numpy as np
+import torch
 
 # ---- Support Vector Machine script ----
 if True:
-
+    device = torch.device("cpu")
     # ---- parameter section -------------------------------
     c = 1.0
     np.random.seed(2)
@@ -52,6 +53,7 @@ if True:
             "description": "...data description...",
             "source_folder_path": "data/stage_1_data/",
             "source_file_name": "toy_data_file.txt",
+            "device": device,
         }
     )
 
@@ -75,6 +77,7 @@ if True:
         {
             "name": "Setting_KFold_CV",
             "description": "This setting enables us to divide our data in sections",
+            "device": device,
         }
     )
 
