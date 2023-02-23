@@ -21,9 +21,9 @@ from code.lib.notifier.artifacts_notifier import ArtifactsNotifier
 # from code.lib.util.device import get_device
 from code.stage_3_code.Dataset_Loader import ValidatedPickleLoader
 from code.stage_3_code.Evaluate_F1 import Evaluate_F1
-from code.stage_3_code.Method_CNN import MethodCNN
+from code.stage_3_code.Method_CNN_CIFAR import MethodCNN
 from code.stage_3_code.Result_Saver import Result_Saver
-from code.stage_3_code.Setting_Train_Test_Split import Setting_Train_Test_Split
+from code.stage_3_code.Setting_Train_Test_Split_CIFAR import Setting_Train_Test_Split
 
 import numpy as np
 import torch
