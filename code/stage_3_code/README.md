@@ -2,7 +2,7 @@
 
 - The code deviates from the template in four major ways:
 	1. Poetry package manager
-	2. Experimenting tracker with Comet (think of this like tensorboard, but for a group), provides:
+	2. Experimenting tracker with Comet (think of this like tensorboard, but for a group), provides
 		- metric logging
 		- experiment tracker acts as a subscriber/observer to various notification messages
 			- handler is responsible for logging metrics
