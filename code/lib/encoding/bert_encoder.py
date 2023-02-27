@@ -1,5 +1,6 @@
 import os
 from dataclasses import dataclass
+from typing import Optional
 
 import torch
 from transformers import BertModel, BertTokenizer  # type: ignore
@@ -44,15 +45,17 @@ class bert_encoder:
     dataset_name: str
     unprocessed_path: str
     processed_path: str
+    tokenize: BertTokenizer
+    model: BertModel
 
     def __init__(self, config: bert_config):
         self.dataset_name = config.dataset_name
         self.unprocessed_path = config.unprocessed_path
         self.processed_path = config.processed_path
+        self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+        self.model = BertModel.from_pretrained("bert-base-uncased", output_hidden_states=True)
 
     def generate_embeddings(self, filepath) -> torch.Tensor:
-        tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
-        model = BertModel.from_pretrained("bert-base-uncased", output_hidden_states=True)
 
         with open(f"{filepath}") as file:
             contents = file.read()
@@ -61,7 +64,7 @@ class bert_encoder:
 
             # NOTE: this truncates longer texts to only 512 tokens. We could look into batching the files if we need to
             # alternatively we can take the first 256 and last 256 tokens rather than first 512
-            encoded_dict = tokenizer.encode_plus(
+            encoded_dict = self.tokenizer.encode_plus(
                 contents,
                 add_special_tokens=True,
                 max_length=512,
@@ -69,10 +72,9 @@ class bert_encoder:
                 return_attention_mask=True,
                 return_tensors="pt",
             )
-            print(encoded_dict)
             tokens = torch.cat((tokens, encoded_dict["input_ids"]), 0)
             attention_mask = torch.cat((attention_mask, encoded_dict["attention_mask"]), 0)
-        model.eval()
+        self.model.eval()
 
         # now feed our information into the model
         with torch.no_grad():
@@ -81,7 +83,7 @@ class bert_encoder:
             # tells model to ignore padding
             # Not using this, its used to tell two seperate sentence contexts apart. not feasible for big documents
             # token_type_ids = encoded_dict["token_type_ids"]
-            output = model(tokens, token_type_ids=None, attention_mask=attention_mask)
+            output = self.model(tokens, token_type_ids=None, attention_mask=attention_mask)
 
             # print(output)
             hidden_states = output[2]
@@ -91,7 +93,6 @@ class bert_encoder:
 
             # rearranges it to batch, tokens, layers, units
             embeddings = embeddings.permute(1, 2, 0, 3)
-            print(embeddings.size())
 
             # next up: sum last 4 layers to get a token vector for each one.
             sum_token_vectors = []
@@ -105,6 +106,49 @@ class bert_encoder:
             # stack into one 512 x 768 tensor
             final_output = torch.stack([tens for tens in sum_token_vectors])
             return final_output
+
+    """
+    2: generate_dataset(cutoff_size: Optional[int] = None): given the base directory for text_classification:
+    generate a dataset to disk of all documents, splitting them into train/test and LABELLING them. if cutoff_size is
+    specified, only generate cutoff_size instances of train and test and then stop. NOTE: this function will ALWAYS
+    generate the dataset from scratch. This is intended as a preprocessing step. Returns a TensorDataset
+    """
+
+    def generate_dataset(self, cutoff_value: Optional[int]):
+        X_train = []
+        X_test = []
+        Y_train = []
+        Y_test = []
+        filecount = 0
+        for dataset_type in ["train", "test"]:
+            for label in ["neg", "pos"]:
+                all_files = [
+                    f for f in os.listdir(f"{self.unprocessed_path}{dataset_type}/{label}/")
+                ]
+                for file in all_files:
+                    print(f"Processing {self.unprocessed_path}{dataset_type}/{label}/{file}")
+                    embed = self.generate_embeddings(
+                        f"{self.unprocessed_path}{dataset_type}/{label}/{file}"
+                    )
+                    if dataset_type == "train":
+                        X_train.append(embed)
+                        Y_train.append(label)
+                    else:
+                        X_test.append(embed)
+                        Y_test.append(label)
+                    filecount += 1
+                    if cutoff_value is not None and filecount >= cutoff_value:
+                        filecount = 0
+                        break
+
+        # print(Y_train)
+        # print(torch.as_tensor(Y_train))
+        return {
+            "X_train": torch.stack(X_train),
+            "Y_train": Y_train,
+            "X_test": torch.stack(X_test),
+            "Y_test": Y_test,
+        }
 
 
 if 1:
