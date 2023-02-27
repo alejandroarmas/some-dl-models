@@ -21,8 +21,8 @@ class TestNLPDataset(unittest.TestCase):
             {
                 "name": "jokes",
                 "description": "...data description...",
-                "source_folder_path": "data/stage_4_data/text_generation/",
-                "source_file_name": "data",
+                "source_folder_path": "code/tests/files/",
+                "source_file_name": "stage_4_gen_sample.csv",
                 "device": "cpu",
             }
         )
