@@ -627,9 +627,9 @@ scipy==1.10.1 ; python_version >= "3.9" and python_version < "3.12" \
 semantic-version==2.10.0 ; python_version >= "3.9" and python_version < "3.12" \
     --hash=sha256:bdabb6d336998cbb378d4b9db3a4b56a1e3235701dc05ea2690d9a997ed5041c \
     --hash=sha256:de78a3b8e0feda74cabc54aab2da702113e33ac9d9eb9d2389bcf1f58b7d9177
-sentry-sdk==1.15.0 ; python_version >= "3.9" and python_version < "3.12" \
-    --hash=sha256:69ecbb2e1ff4db02a06c4f20f6f69cb5dfe3ebfbc06d023e40d77cf78e9c37e7 \
-    --hash=sha256:7ad4d37dd093f4a7cb5ad804c6efe9e8fab8873f7ffc06042dc3f3fd700a93ec
+sentry-sdk==1.16.0 ; python_version >= "3.9" and python_version < "3.12" \
+    --hash=sha256:633edefead34d976ff22e7edc367cdf57768e24bc714615ccae746d9d91795ae \
+    --hash=sha256:a900845bd78c263d49695d48ce78a4bce1030bbd917e0b6cc021fc000c901113
 setuptools==67.4.0 ; python_version >= "3.9" and python_version < "3.12" \
     --hash=sha256:e5fd0a713141a4a105412233c63dc4e17ba0090c8e8334594ac790ec97792330 \
     --hash=sha256:f106dee1b506dee5102cc3f3e9e68137bbad6d47b616be7991714b0c62204251
@@ -776,9 +776,9 @@ torch==1.13.1 ; python_version >= "3.9" and python_version < "3.12" \
     --hash=sha256:eeeb204d30fd40af6a2d80879b46a7efbe3cf43cdbeb8838dd4f3d126cc90b2b \
     --hash=sha256:f402ca80b66e9fbd661ed4287d7553f7f3899d9ab54bf5c67faada1555abde28 \
     --hash=sha256:fd12043868a34a8da7d490bf6db66991108b00ffbeecb034228bfcbbd4197143
-torchmetrics==0.11.1 ; python_version >= "3.9" and python_version < "3.12" \
-    --hash=sha256:9987d7c21b081cceef246a72be1ce25bf29c842764f59dda54f59e3b4cd1970b \
-    --hash=sha256:de2e9feb3316f798ab08b318302ff04e764f47e691f0847f780044279fa176ca
+torchmetrics==0.11.3 ; python_version >= "3.9" and python_version < "3.12" \
+    --hash=sha256:6a2bcc17361f0e4c1668c92595b12ef30ccf9ef1d03263bee7c6136a882afe30 \
+    --hash=sha256:7797c6e86f7474b6e0beb46f979044354a831e012199e96e52d2208a15ebe418
 torchvision==0.14.1 ; python_version >= "3.9" and python_version < "3.12" \
     --hash=sha256:0ed02aefd09bf1114d35f1aa7dce55aa61c2c7e57f9aa02dce362860be654e85 \
     --hash=sha256:13986f0c15377ff23039e1401012ccb6ecf71024ce53def27139e4eac5a57592 \
