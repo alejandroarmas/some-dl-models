@@ -98,8 +98,8 @@ charset-normalizer==3.0.1 ; python_version >= "3.9" and python_version < "3.12" 
 colorama==0.4.6 ; python_version >= "3.9" and python_version < "3.12" and platform_system == "Windows" \
     --hash=sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44 \
     --hash=sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6
-comet-ml==3.32.2 ; python_version >= "3.9" and python_version < "3.12" \
-    --hash=sha256:7187790d140f36d144d143439d7fadbc5f90a32c880ef015d94d87a9ba79105f
+comet-ml==3.32.3 ; python_version >= "3.9" and python_version < "3.12" \
+    --hash=sha256:a9943d349352681ebf154186721047ba3a59d7fed5fa4ce44c3fde99a01c0bba
 configobj==5.0.8 ; python_version >= "3.9" and python_version < "3.12" \
     --hash=sha256:6f704434a07dc4f4dc7c9a745172c1cad449feb548febd9f7fe362629c627a97 \
     --hash=sha256:a7a8c6ab7daade85c3f329931a807c8aee750a2494363934f8ea84d8a54c87ea

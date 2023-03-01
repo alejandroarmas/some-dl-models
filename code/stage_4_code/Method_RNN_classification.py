@@ -24,7 +24,6 @@ class MethodRNNClassification(method, nn.Module):
         metrics: Optional[MetricCollection] = None,
     ):
         method.__init__(self, config, manager, metrics)
-        self.p = config["hyperparameters"]
         p = config["hyperparameters"]
         # Build vocab
         self.glove = torchtext.vocab.GloVe(name="6B", dim=50)
@@ -35,37 +34,35 @@ class MethodRNNClassification(method, nn.Module):
             hidden_size=p["hidden_size"],
             num_layers=p["num_layers"],
             nonlinearity=p["nonlinearity"],
-            bias=p["bias"],
-            batch_first=p["batch_first"],
+            bias=True,
+            batch_first=True,  # defines order as (batch, sequence, features)
             dropout=p["dropout"],
             bidirectional=False,
         )
         self.learning_rate = p["learning_rate"]
         self.max_epoch = p["max_epoch"]
         self.batch_size = p["batch_size"]
+        self.input_size = p["input_size"]
+        self.hidden_size = p["hidden_size"]
 
     # input is the raw text of a document
     def forward(
-        self, input: torch.Tensor, hx: Optional[torch.Tensor] = None
+        self, batch: torch.Tensor, hx: Optional[torch.Tensor] = None
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         #  torch_tensor_first_word = torch.tensor(glove.stoi[tokenized_sentence[0]], dtype=torch.long)
         #  embeddings_for_first_word = my_embeddings(torch_tensor_first_word)
-        tokenized_input = self.tokenizer(input)
-        if len(tokenized_input) > self.p["input_size"]:  # truncate
-            beginning_len = self.p["input_size"] // 2
-            ending_len = self.p["input_size"] - beginning_len
-            tokenized_input = tokenized_input[:beginning_len] + tokenized_input[ending_len:]
-            print(f"Truncated {tokenized_input=}")
+        tokenized_input = self.tokenizer(batch)
 
         embedded_input = self.embedding(
             torch.tensor([self.glove.stoi[t] for t in tokenized_input], dtype=torch.long)
         )
+        padded_input = nn.utils.rnn.pad_sequence(embedded_input, batch_first=True)
         # problem: how tf do I know how big the input vectors are?
         # if len(embedded_input) < self.p["input_size"]:
         #     # pad
         #     embedded_input = torch.cat((embedded_input, torch.zeros(self.p)))
-        first_hidden = torch.zeros((self.p["hidden_size"]))
-        out, hidden = self.rnn(embedded_input, first_hidden)
+        first_hidden = torch.zeros((self.batch_size, self.hidden_size))
+        out, hidden = self.rnn(padded_input, first_hidden)
 
         return out, hidden
 

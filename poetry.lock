@@ -220,13 +220,13 @@ files = [
 
 [[package]]
 name = "comet-ml"
-version = "3.32.2"
+version = "3.32.3"
 description = "Supercharging Machine Learning"
 category = "main"
 optional = false
 python-versions = ">=3.5"
 files = [
-    {file = "comet_ml-3.32.2-py3-none-any.whl", hash = "sha256:7187790d140f36d144d143439d7fadbc5f90a32c880ef015d94d87a9ba79105f"},
+    {file = "comet_ml-3.32.3-py3-none-any.whl", hash = "sha256:a9943d349352681ebf154186721047ba3a59d7fed5fa4ce44c3fde99a01c0bba"},
 ]
 
 [package.dependencies]
