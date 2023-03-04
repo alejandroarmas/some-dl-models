@@ -1032,14 +1032,14 @@ tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "pa
 
 [[package]]
 name = "platformdirs"
-version = "3.0.0"
+version = "3.1.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "platformdirs-3.0.0-py3-none-any.whl", hash = "sha256:b1d5eb14f221506f50d6604a561f4c5786d9e80355219694a1b244bcd96f4567"},
-    {file = "platformdirs-3.0.0.tar.gz", hash = "sha256:8a1228abb1ef82d788f74139988b137e78692984ec7b08eaa6c65f1723af28f9"},
+    {file = "platformdirs-3.1.0-py3-none-any.whl", hash = "sha256:13b08a53ed71021350c9e300d4ea8668438fb0046ab3937ac9a29913a1a1350a"},
+    {file = "platformdirs-3.1.0.tar.gz", hash = "sha256:accc3665857288317f32c7bebb5a8e482ba717b474f3fc1d18ca7f9214be0cef"},
 ]
 
 [package.extras]
@@ -1804,6 +1804,41 @@ test = ["bert-score (==0.3.13)", "cloudpickle (>1.3)", "coverage (>5.2)", "dytho
 text = ["nltk (>=3.6)", "regex (>=2021.9.24)", "tqdm (>=4.41.0)"]
 
 [[package]]
+name = "torchtext"
+version = "0.14.1"
+description = "Text utilities and datasets for PyTorch"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "torchtext-0.14.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:506bda24d28cf2447c0d89cb77a914abb3fbad312b58646caa8c918237e58a2f"},
+    {file = "torchtext-0.14.1-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:65f3ea8915bf2f3797d604721a01aa9eb787afe0df33fe5acdf8e11c17eb6011"},
+    {file = "torchtext-0.14.1-cp310-cp310-manylinux1_x86_64.whl", hash = "sha256:bfe3e60f56580c0137531e9a0c7166298fc7f100664208a4cad4a354d9736e5f"},
+    {file = "torchtext-0.14.1-cp310-cp310-manylinux2014_aarch64.whl", hash = "sha256:3516a1e49c1ce33e19d35f4a1e7ba9fb89d033b057508fc889b4023b03a58c02"},
+    {file = "torchtext-0.14.1-cp310-cp310-win_amd64.whl", hash = "sha256:52c1aae6626ed626b4bec65cebeb2fdf909395e2664d1ee0d79492eeb3513490"},
+    {file = "torchtext-0.14.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:8c976fd2ab0388e9d3fca797614225faf2fcafff76f671bd27032be3d4b36289"},
+    {file = "torchtext-0.14.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:86f80a860c7d19e2c78e226334d8efc3b210946c834a8058ccc691b452be0a34"},
+    {file = "torchtext-0.14.1-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:3f04625e0afe7d890c95c2f68e758b6e86a5c7db58dcfd8e208b03ec3dd5f561"},
+    {file = "torchtext-0.14.1-cp37-cp37m-win_amd64.whl", hash = "sha256:15d83cf0bf07cc864e2656ee322b2b51d4a7fe00a94c9fc8f40128b3dd992004"},
+    {file = "torchtext-0.14.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:0e5d8c837c408630a31009e4b76748fd381f369331670d638c19fbb3695fd997"},
+    {file = "torchtext-0.14.1-cp38-cp38-macosx_12_0_arm64.whl", hash = "sha256:fb5f39656281957b20affe4172cd596ccf7d2a7c9e28677b06231c018fe83a26"},
+    {file = "torchtext-0.14.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:ca60d46e084d431d16473d81a789010aa19d51b7b6ec868b600397409c2d9939"},
+    {file = "torchtext-0.14.1-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:2a523bee4c0e6b9e3ea68d206bcae1d7c13504c819f1ae267e6d900bd08a0d5a"},
+    {file = "torchtext-0.14.1-cp38-cp38-win_amd64.whl", hash = "sha256:cb5b3664c24b3b13030b61b739bdbaafde7840091cbd08b89d2f319585e70363"},
+    {file = "torchtext-0.14.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:0ebdf3058af4394c2602cc62380e25830fa4de60d1c81ecb96a610a51e9db80d"},
+    {file = "torchtext-0.14.1-cp39-cp39-macosx_12_0_arm64.whl", hash = "sha256:8e6ec13244074c55fa8a762414bed34ba04f4d577a061e4da85fb7a1e063fd56"},
+    {file = "torchtext-0.14.1-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:93bcd73c9c58353a3caf880a11a7d95b9832a129aaee3bd30ba49e690a278f47"},
+    {file = "torchtext-0.14.1-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:e592d9a3288859cb9af3950581c6441dfaf3d248c03e720123a382188857d6be"},
+    {file = "torchtext-0.14.1-cp39-cp39-win_amd64.whl", hash = "sha256:82e5df4a7ad828d3f828b19f563993656ea1b31b4e828a22f1905b1f17faefdd"},
+]
+
+[package.dependencies]
+numpy = "*"
+requests = "*"
+torch = "*"
+tqdm = "*"
+
+[[package]]
 name = "torchvision"
 version = "0.14.1"
 description = "image and video datasets and models for torch deep learning"
@@ -1844,14 +1879,14 @@ scipy = ["scipy"]
 
 [[package]]
 name = "tqdm"
-version = "4.64.1"
+version = "4.65.0"
 description = "Fast, Extensible Progress Meter"
 category = "main"
 optional = false
-python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
+python-versions = ">=3.7"
 files = [
-    {file = "tqdm-4.64.1-py2.py3-none-any.whl", hash = "sha256:6fee160d6ffcd1b1c68c65f14c829c22832bc401726335ce92c52d395944a6a1"},
-    {file = "tqdm-4.64.1.tar.gz", hash = "sha256:5f4f682a004951c1b450bc753c710e9280c5746ce6ffedee253ddbcbf54cf1e4"},
+    {file = "tqdm-4.65.0-py3-none-any.whl", hash = "sha256:c4f53a17fe37e132815abceec022631be8ffe1b9381c2e6e30aa70edc99e9671"},
+    {file = "tqdm-4.65.0.tar.gz", hash = "sha256:1871fb68a86b8fb3b59ca4cdd3dcccbc7e6d613eeed31f4c332531977b89beb5"},
 ]
 
 [package.dependencies]
@@ -2124,4 +2159,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "f754eafc32a4fc777f98328855f8342947682e1d3e298ede8ddb66805879cf31"
+content-hash = "60e042955574697331c5798e911fcf4e1c91da701eee294715a77daf1a3c0441"

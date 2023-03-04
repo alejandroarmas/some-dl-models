@@ -49,7 +49,6 @@ class CometEvaluateHandler(MLEventListener):
         self.__experiment = experiment
 
     def update(self, data: EvaluateNotification) -> None:
-
         if self.__experiment is not None:
             self.__experiment.log_parameter("measure", data.measure)
             self.__experiment.log_metric("evaluation", data.evaluation)

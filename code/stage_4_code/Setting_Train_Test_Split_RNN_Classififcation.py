@@ -1,5 +1,6 @@
 from code.base_class.setting import setting
 from code.stage_4_code.Dataset_Loader_Classification import (
+    Classification_Vocabulary,
     Classififcation_Dataset,
 )
 
@@ -7,9 +8,11 @@ from torch.utils.data import DataLoader
 
 
 class Setting_Train_Test_Split(setting):
+    dataset_vocab: Classification_Vocabulary
+
     def load_run_save_evaluate(self):
 
-        loaded_data = self._dataset.load()
+        loaded_data = self.dataset_vocab.get_loaded_data()
 
         self._method.to(self.device)
 
@@ -41,13 +44,18 @@ class Setting_Train_Test_Split(setting):
         self._method.training_loader = training_dataloader
         self._method.testing_loader = testing_dataloader
 
+        self._method.dataset_vocab = self.dataset_vocab
+
         output_result = self._method.run()
 
         self._result.data = output_result
         self._result.save()
 
-        self._artifacts.serialize()
+        # self._artifacts.serialize()
 
         self._evaluate.data = output_result
 
         return self._evaluate.evaluate(), None
+
+    def prepare_vocab(self, vocab: Classification_Vocabulary):
+        self.dataset_vocab = vocab
