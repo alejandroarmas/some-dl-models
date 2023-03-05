@@ -108,7 +108,7 @@ def main():
     data_obj = Classification_Loader(d_config, d_notifier)
 
     print("-------Building Vocabulary-------")
-    cutoff_value = 100
+    cutoff_value = None
     vocab_obj = Classification_Vocabulary(data_obj, cutoff_value)
 
     m_config = methodConfig(
@@ -124,7 +124,7 @@ def main():
                 "dense_size_1": 8,
                 "output_dim_1": 1,
                 "learning_rate": 1e-3,
-                "max_epoch": 2,
+                "max_epoch": 10,
                 "batch_size": 10,
                 "embedding_grad_epoch": 50,
                 "vocab_size": vocab_obj.get_vocab().__len__(),
@@ -142,7 +142,16 @@ def main():
             BinaryRecall(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
         ]
     )
+    test_batch_metrics = MetricCollection(
+        [
+            BinaryAccuracy(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
+            BinaryF1Score(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
+            BinaryPrecision(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
+            BinaryRecall(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
+        ]
+    )
     method_obj = MethodLSTMClassification(m_config, m_notifier, train_batch_metrics)
+    method_obj.test_batch_metrics = test_batch_metrics
 
     r_notifier = ResultNotifier()
     r_notifier.subscribe(experiment_tracker.result_listener, MLEventType("save"))

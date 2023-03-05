@@ -149,7 +149,6 @@ class MethodLSTMClassification(method, nn.Module):
                 y_pred = torch.unsqueeze(y_pred, dim=1)
                 if torch.isnan(y_pred).any():
                     print(y_pred)
-
                 train_loss = loss_function(y_pred, batch["label"].float())
                 optimizer.zero_grad()
 
@@ -167,7 +166,7 @@ class MethodLSTMClassification(method, nn.Module):
 
             if epoch == self.embedding_grad_epoch:
                 print("unfreezing pretrained vectors")
-
+            self.validate(epoch)
             if epoch % 10 == 0:
                 print(
                     "Epoch:",
@@ -182,11 +181,52 @@ class MethodLSTMClassification(method, nn.Module):
                 ClassificationNotification(
                     epoch=epoch,
                     loss=train_loss.item(),
+                    type="train",
                     **{names[n]: m.compute() for n, m in self.batch_metrics.items()},
                 ),
             )
             for metric in self.batch_metrics.values():
                 metric.reset()
+
+    def validate(self, epoch):
+        names = {
+            "BinaryAccuracy": "accuracy",
+            "BinaryF1Score": "f1",
+            "BinaryPrecision": "precision",
+            "BinaryRecall": "recall",
+        }
+        loss_function = nn.BCELoss()
+        for i in range(10):
+            batch = next(iter(self.testing_loader))
+            # was in for loop before
+            with torch.no_grad():
+                y_pred = self.forward(batch["contents"])
+                y_pred = torch.unsqueeze(y_pred, dim=1)
+                y_pred = torch.round(y_pred)
+
+                test_loss = loss_function(y_pred, batch["label"].float())
+
+                # # zeroes out the gradient of all prelearned vectors until the noted epoch has passed
+                # if epoch < self.embedding_grad_epoch:
+                #     self.embedding.weight.grad[self.prelearned_indices] = 0
+                # clip = 0.3 #0.3 worked
+                # torch.nn.utils.clip_grad_norm_(self.parameters(), clip)
+                if self.notification_manager is not None:
+                    self.test_batch_metrics.update(batch["label"], torch.round(y_pred))
+                # was in for loop before
+            accumulated_loss = self.test_batch_metrics.compute()
+            print(accumulated_loss)
+        self.notification_manager.notify(
+            MLEventType("method"),
+            ClassificationNotification(
+                epoch=epoch,
+                loss=test_loss.item(),
+                type="test",
+                **{names[n]: m.compute() for n, m in self.test_batch_metrics.items()},
+            ),
+        )
+        for metric in self.test_batch_metrics.values():
+            metric.reset()
 
     def test_model(self):
         y_pred = None
