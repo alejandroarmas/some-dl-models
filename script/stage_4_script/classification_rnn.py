@@ -24,9 +24,7 @@ from code.stage_4_code.Dataset_Loader_Classification import (
     Classification_Vocabulary,
 )
 from code.stage_4_code.Evaluate_F1 import Evaluate_F1
-from code.stage_4_code.Method_LSTM_classification import (
-    MethodLSTMClassification,
-)
+from code.stage_4_code.Method_GRU_classification import MethodGRUClassification
 
 # from code.stage_4_code.Method_RNN_classification import MethodRNNClassification
 from code.stage_4_code.Result_Saver import Result_Saver
@@ -114,7 +112,7 @@ def main():
     m_config = methodConfig(
         {
             "name": f"{algorithm_type}-method",
-            "description": "This is a Recursive Neural Network",
+            "description": "This is a GRU Recursive Neural Network",
             "hyperparameters": {
                 "input_size": 50,
                 "hidden_size": 16,
@@ -124,7 +122,7 @@ def main():
                 "dense_size_1": 8,
                 "output_dim_1": 1,
                 "learning_rate": 1e-3,
-                "max_epoch": 10,
+                "max_epoch": 100,
                 "batch_size": 10,
                 "embedding_grad_epoch": 50,
                 "vocab_size": vocab_obj.get_vocab().__len__(),
@@ -150,7 +148,7 @@ def main():
             BinaryRecall(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
         ]
     )
-    method_obj = MethodLSTMClassification(m_config, m_notifier, train_batch_metrics)
+    method_obj = MethodGRUClassification(m_config, m_notifier, train_batch_metrics)
     method_obj.test_batch_metrics = test_batch_metrics
 
     r_notifier = ResultNotifier()
