@@ -18,7 +18,7 @@ from torchmetrics import MetricCollection
 from torchtext.vocab import Vocab  # type: ignore
 
 
-class MethodRNNClassification(method, nn.Module):
+class MethodLSTMClassification(method, nn.Module):
     training_loader: DataLoader
     testing_loader: DataLoader
 
@@ -44,12 +44,10 @@ class MethodRNNClassification(method, nn.Module):
         self.embedding_matrix[1] = torch.zeros(self.input_size, dtype=torch.float)
 
         self.embedding = nn.Embedding.from_pretrained(self.embedding_matrix, freeze=False).float()
-
-        self.rnn = nn.RNN(
+        self.lstm = nn.LSTM(
             input_size=p["input_size"],
             hidden_size=p["hidden_size"],
             num_layers=p["num_layers"],
-            nonlinearity=p["nonlinearity"],
             bias=True,
             batch_first=True,  # defines order as (batch, sequence, features)
             dropout=p["dropout"],
@@ -120,7 +118,7 @@ class MethodRNNClassification(method, nn.Module):
         #     (self.num_layers * self.num_directions, self.batch_size, self.hidden_size),
         #     dtype=torch.float,
         # )
-        output, hn = self.rnn(embedded_input)
+        output, (hn, cn) = self.lstm(embedded_input)
         # print(hn) #nans
         # fc = self.dense(hn)
         out = self.output(hn)

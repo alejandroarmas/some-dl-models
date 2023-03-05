@@ -30,7 +30,7 @@ class CometMethodHandler(MLEventListener):
         data_report = {k: v for k, v in data.dict().items() if k not in {"epoch"}}
 
         if self.__experiment is not None:
-            with self.__experiment.test():
+            with self.__experiment.train():
 
                 self.__experiment.log_metrics(data_report, step=self.__step, epoch=data.epoch)
 

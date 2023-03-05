@@ -24,11 +24,16 @@ from code.stage_4_code.Dataset_Loader_Classification import (
     Classification_Vocabulary,
 )
 from code.stage_4_code.Evaluate_F1 import Evaluate_F1
-from code.stage_4_code.Method_RNN_classification import MethodRNNClassification
+from code.stage_4_code.Method_LSTM_classification import (
+    MethodLSTMClassification,
+)
+
+# from code.stage_4_code.Method_RNN_classification import MethodRNNClassification
 from code.stage_4_code.Result_Saver import Result_Saver
 from code.stage_4_code.Setting_Train_Test_Split_RNN_Classififcation import (
     Setting_Train_Test_Split,
 )
+from typing import TypedDict
 
 import numpy as np
 import torch
@@ -39,6 +44,11 @@ from torchmetrics.classification import (
     BinaryPrecision,
     BinaryRecall,
 )
+
+
+class metrics(TypedDict):
+    train: MetricCollection
+    test: MetricCollection
 
 
 def main():
@@ -98,7 +108,7 @@ def main():
     data_obj = Classification_Loader(d_config, d_notifier)
 
     print("-------Building Vocabulary-------")
-    cutoff_value = 500
+    cutoff_value = 100
     vocab_obj = Classification_Vocabulary(data_obj, cutoff_value)
 
     m_config = methodConfig(
@@ -107,15 +117,15 @@ def main():
             "description": "This is a Recursive Neural Network",
             "hyperparameters": {
                 "input_size": 50,
-                "hidden_size": 96,
+                "hidden_size": 16,
                 "num_layers": 1,
                 "nonlinearity": "tanh",
                 "dropout": 0,
-                "dense_size_1": 42,
+                "dense_size_1": 8,
                 "output_dim_1": 1,
-                "learning_rate": 1e-2,
-                "max_epoch": 300,
-                "batch_size": 5,
+                "learning_rate": 1e-3,
+                "max_epoch": 2,
+                "batch_size": 10,
                 "embedding_grad_epoch": 50,
                 "vocab_size": vocab_obj.get_vocab().__len__(),
             },
@@ -124,7 +134,7 @@ def main():
 
     m_notifier = MethodNotifier()
     m_notifier.subscribe(experiment_tracker.method_listener, MLEventType("method"))
-    batch_metrics = MetricCollection(
+    train_batch_metrics = MetricCollection(
         [
             BinaryAccuracy(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
             BinaryF1Score(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
@@ -132,8 +142,7 @@ def main():
             BinaryRecall(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
         ]
     )
-
-    method_obj = MethodRNNClassification(m_config, m_notifier, batch_metrics)
+    method_obj = MethodLSTMClassification(m_config, m_notifier, train_batch_metrics)
 
     r_notifier = ResultNotifier()
     r_notifier.subscribe(experiment_tracker.result_listener, MLEventType("save"))

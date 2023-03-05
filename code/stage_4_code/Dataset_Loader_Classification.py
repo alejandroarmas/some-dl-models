@@ -120,7 +120,7 @@ class Classification_Vocabulary:
         self.vocab = torchtext.vocab.build_vocab_from_iterator(
             [self.yield_tokens(self.loaded_data["X_train"])],
             specials=["<unk>", "<pad>"],
-            min_freq=3,
+            min_freq=10,
         )
         self.vocab.set_default_index(self.vocab.__getitem__("<unk>"))
         print("-------done building vocab--------")
