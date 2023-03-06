@@ -99,14 +99,14 @@ def main():
         {"name": "recall", "description": "This is my recall object evaluator"}
     )
 
-    experiment_tracker = CometExperimentTracker(config, dry_run=False)
+    experiment_tracker = CometExperimentTracker(config, dry_run=True)
 
     d_notifier = DatasetNotifier()
     d_notifier.subscribe(experiment_tracker.dataset_listener, MLEventType("load"))
     data_obj = Classification_Loader(d_config, d_notifier)
 
     print("-------Building Vocabulary-------")
-    cutoff_value = None
+    cutoff_value = 100
     vocab_obj = Classification_Vocabulary(data_obj, cutoff_value)
 
     m_config = methodConfig(
@@ -122,9 +122,8 @@ def main():
                 "dense_size_1": 8,
                 "output_dim_1": 1,
                 "learning_rate": 1e-3,
-                "max_epoch": 100,
-                "batch_size": 10,
-                "embedding_grad_epoch": 50,
+                "max_epoch": 4,
+                "batch_size": 100,
                 "vocab_size": vocab_obj.get_vocab().__len__(),
             },
         }
@@ -140,16 +139,7 @@ def main():
             BinaryRecall(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
         ]
     )
-    test_batch_metrics = MetricCollection(
-        [
-            BinaryAccuracy(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
-            BinaryF1Score(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
-            BinaryPrecision(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
-            BinaryRecall(num_classes=m_config["hyperparameters"]["output_dim_1"]).to(device),
-        ]
-    )
     method_obj = MethodGRUClassification(m_config, m_notifier, train_batch_metrics)
-    method_obj.test_batch_metrics = test_batch_metrics
 
     r_notifier = ResultNotifier()
     r_notifier.subscribe(experiment_tracker.result_listener, MLEventType("save"))

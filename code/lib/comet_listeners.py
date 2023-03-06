@@ -24,23 +24,17 @@ class CometMethodHandler(MLEventListener):
             assert isinstance(experiment, Experiment)
         self.__experiment = experiment
         self.__step = 1
-        self.__step2 = 1
 
     def update(self, data: MethodNotification) -> None:
 
-        data_report = {k: v for k, v in data.dict().items() if k not in {"epoch", "type"}}
+        data_report = {k: v for k, v in data.dict().items() if k not in {"epoch"}}
 
         if self.__experiment is not None:
-            if data.type == "train":
-                with self.__experiment.train():
+            with self.__experiment.test():
 
-                    self.__experiment.log_metrics(data_report, step=self.__step, epoch=data.epoch)
+                self.__experiment.log_metrics(data_report, step=self.__step, epoch=data.epoch)
 
-                    self.__step = self.__step + 1
-            else:
-                with self.__experiment.test():
-                    self.__experiment.log_metrics(data_report, step=self.__step2, epoch=data.epoch)
-                    self.__step2 += 1
+                self.__step = self.__step + 1
 
         else:
             print(f"data_report: {data_report}")

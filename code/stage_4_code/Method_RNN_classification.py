@@ -15,7 +15,6 @@ import torchtext  # type: ignore
 from torch import nn
 from torch.utils.data import DataLoader
 from torchmetrics import MetricCollection
-from torchtext.vocab import Vocab  # type: ignore
 
 
 class MethodRNNClassification(method, nn.Module):
@@ -68,38 +67,10 @@ class MethodRNNClassification(method, nn.Module):
         self.max_epoch = p["max_epoch"]
         self.batch_size = p["batch_size"]
         self.hidden_size = p["hidden_size"]
-        self.embedding_grad_epoch = p["embedding_grad_epoch"]
 
-    # input is the raw text of a document
-    def prepareEmbedding(self, vocabulary: Vocab):
-        glove = torchtext.vocab.GloVe(name="6B", dim=self.input_size)
-        indices = []
-        for entry in vocabulary.get_stoi().keys():
-            try:
-                # print(entry)
-                if entry == "<unk>" or entry == "<pad>":
-                    vec = torch.zeros(self.input_size, dtype=torch.float)
-                else:
-                    index = glove.stoi[entry]
-                    vec = glove.vectors[index]
-                indices.append(vocabulary.__getitem__(entry))
-                self.embedding_matrix[vocabulary.__getitem__(entry)] = vec
-            except KeyError:
-                pass
-                # print("Error", entry)
-        percent_prelearned = len(indices) / vocabulary.__len__()
-        self.prelearned_indices = torch.LongTensor(indices)
-        print(f"{percent_prelearned=}")
-        self.embedding = nn.Embedding.from_pretrained(self.embedding_matrix, freeze=False).float()
-        print(self.embedding_matrix.size())
-
-    def forward(
-        self, batch: torch.Tensor, hx: Optional[torch.Tensor] = None
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        # Some kind of buggy behavior with ONNX causes None objects to appear in batches of size 1
-
+    def forward(self, batch: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         tokenized_input = [self.tokenizer(b) for b in batch]
-        # print("tokenized", tokenized_input, len(tokenized_input))
+
         input_indices = [
             torch.tensor(
                 [self.dataset_vocab.get_vocab().__getitem__(token) for token in document],
@@ -112,22 +83,15 @@ class MethodRNNClassification(method, nn.Module):
             padding_value=self.dataset_vocab.get_vocab().__getitem__("<pad>"),
             batch_first=True,
         )
-        # print("pads", padded_input, padded_input.size())
         embedded_input = self.embedding(padded_input)
-        # print("embeds",embedded_input, embedded_input.size())
-        # pads everything in the batch to the size of the largest object in the batch
-        # first_hidden = torch.rand(
-        #     (self.num_layers * self.num_directions, self.batch_size, self.hidden_size),
-        #     dtype=torch.float,
-        # )
+
         output, hn = self.rnn(embedded_input)
-        # print(hn) #nans
-        # fc = self.dense(hn)
+
         out = self.output(hn)
-        # print(out) #nan
+
         out = torch.squeeze(out, dim=0)
         out = torch.squeeze(out, dim=1)
-        # print(out) #nan
+
         return out
 
     def train_model(self):
@@ -139,36 +103,22 @@ class MethodRNNClassification(method, nn.Module):
             "BinaryPrecision": "precision",
             "BinaryRecall": "recall",
         }
-        print("training type: ", type(self.training_loader))
-
-        print("-----loading pretrained vectors------")
-        # self.prepareEmbedding(self.dataset_vocab.get_vocab())
         print("--start training...")
 
         for epoch in range(self.max_epoch):
             for idx, batch in enumerate(self.training_loader):
                 y_pred = self.forward(batch["contents"])
                 y_pred = torch.unsqueeze(y_pred, dim=1)
-                if torch.isnan(y_pred).any():
-                    print(y_pred)
 
                 train_loss = loss_function(y_pred, batch["label"].float())
                 optimizer.zero_grad()
 
                 train_loss.backward()
 
-                # # zeroes out the gradient of all prelearned vectors until the noted epoch has passed
-                # if epoch < self.embedding_grad_epoch:
-                #     self.embedding.weight.grad[self.prelearned_indices] = 0
-                # clip = 0.3 #0.3 worked
-                # torch.nn.utils.clip_grad_norm_(self.parameters(), clip)
                 optimizer.step()
                 if self.notification_manager is not None:
                     self.batch_metrics.update(batch["label"], torch.round(y_pred))
             accumulated_loss = self.batch_metrics.compute()
-
-            if epoch == self.embedding_grad_epoch:
-                print("unfreezing pretrained vectors")
 
             if epoch % 10 == 0:
                 print(

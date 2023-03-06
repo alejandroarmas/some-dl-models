@@ -17,7 +17,6 @@ class MethodNotification:
 
     epoch: int
     loss: float
-    type: str
 
     def dict(self) -> dict:
         return asdict(self)
