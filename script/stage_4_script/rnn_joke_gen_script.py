@@ -38,9 +38,6 @@ from torchmetrics.classification import (
     MulticlassRecall,
 )
 
-# ---- Convolutional - Neural - Network script ----
-
-
 def main():
     # ---- parameter section -------------------------------
     np.random.seed(2)
@@ -52,7 +49,7 @@ def main():
     device: torch.device = torch.device("cpu")
 
     algorithm_type = "lstm"
-    dataset_name = "data"
+    dataset_name = "data.csv"
 
     config = CometConfig(
         {

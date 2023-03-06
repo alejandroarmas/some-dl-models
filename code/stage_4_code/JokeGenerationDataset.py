@@ -11,6 +11,8 @@ from code.base_class.dataset import dataset, datasetConfig
 from code.lib.notifier import DatasetNotifier
 from typing import Callable, Literal, Optional
 
+import pandas as pd
+import re
 import torch
 from torch.utils.data import Dataset
 
@@ -59,15 +61,59 @@ class JokeFilePreprocess(dataset):
     def load(self) -> list[str]:
 
         data = []
+    
+        filePath = self.dataset_source_folder_path + self.dataset_source_file_name
+        filePathClean = self.dataset_source_folder_path + "data_clean.csv"
 
-        with open(f"{self.dataset_source_folder_path}{self.dataset_source_file_name}", "r") as f:
-            while line := f.readline().rstrip():
-                comma_index: int = (
-                    line.find(",") + 2
-                )  # + 1 from the character after comma, and another + 1 for ' symbol
-                end_index = len(line) - 1
-                cleaned_line = line[comma_index:end_index]
-                data.append(cleaned_line)
+        print("\nloading data...\n")
+        df = pd.read_csv(filePath, header=None, names=range(7))
+        #df = df.apply(lambda row: ' '.join(row.values.astype(str)), axis=1)
+
+        # remove ID column from dataset
+        df = df.iloc[:, 1] 
+
+        # drop rows that have links 
+        http_rows = df[df[:].str.contains('http', case=False)]
+        df = df.drop(http_rows.index)
+
+        # drop rows that contain parentheses
+        paren_rows = df[df[:].str.contains('\(|\)', regex=True)]
+        df = df.drop(paren_rows.index)
+
+        # drop any rows that contain '\r'
+        df[:] = df[:].replace(to_replace=r'.*\r.*\n?', value='', regex=True)
+
+        # drop rows that contain '&g'
+        df[:] = df[:].replace(to_replace=r'.*&g.*\n?', value='', regex=True)
+
+        # remove sequences which start with 'nan'
+        # df[:] = df[:].replace(to_replace=r'nan.*', value='', regex=True)
+
+        # remove characters
+        df[:] = df[:].replace(to_replace = r"[\\/()\[\]!.?*-\:#&^%;><_~`]", value='', regex=True)
+
+        # remove digits
+        df[:] = df[:].replace(to_replace = r'\d', value='', regex=True)
+
+        # append <EOS> to each line
+        # df[:] = df[:] + "eos"
+        
+        # write to file
+        print("\nwriting 'clean' data...\n")
+        df.to_csv(filePathClean, index=False, header=False)
+        
+        # fill data list
+        with open(filePathClean, "r") as f:
+            for line in f:
+                cleanerLine = re.sub(r'[\'"]', '', line)              # remove all double or single quotations
+                #cleanerLine = re.sub(r'\s{2,}', ' ', line.strip())    # remove extra white spaces
+                data.append(cleanerLine)
+        
+        #convert to lowercase
+        data = [w.lower() for w in data]
+
+        for line in data:
+            print(line)
 
         return data
 
