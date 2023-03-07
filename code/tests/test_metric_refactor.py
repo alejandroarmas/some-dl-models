@@ -1,13 +1,7 @@
-import os
 import unittest
 from code.base_class.method import methodConfig
-from code.base_class.notifier import MLEventType
-from code.lib.comet_listeners import (
-    CometConfig,
-    CometExperimentTracker,
-    CometMethodHandler,
-)
-from code.lib.notifier import ClassificationNotification, MethodNotifier
+from code.lib.comet_listeners import CometMethodHandler
+from code.lib.notifier import ClassificationNotification
 from code.stage_1_code.Method_MLP import Method_MLP
 from unittest.mock import MagicMock
 
@@ -25,17 +19,6 @@ from torchmetrics.classification import (
 class TestMetrics(unittest.TestCase):
     def test_metrics(self):
         device = torch.device("cpu")
-        config = CometConfig(
-            {
-                "api_key": os.environ["COMET_API_KEY"],
-                "project_name": "some-dl-models",
-                "workspace": "ecs189g",
-            }
-        )
-        experiment_tracker = CometExperimentTracker(config, dry_run=True)
-
-        m_notifier = MethodNotifier()
-        m_notifier.subscribe(experiment_tracker.method_listener, MLEventType("method"))
         batch_metrics = MetricCollection(
             [
                 BinaryAccuracy().to(device),
@@ -53,7 +36,7 @@ class TestMetrics(unittest.TestCase):
             }
         )
 
-        method_obj = Method_MLP(m_config, m_notifier, batch_metrics)
+        method_obj = Method_MLP(m_config, None, batch_metrics)
 
         # ensures that past references to batch_metrics will not break
         assert method_obj.batch_metrics == method_obj.train_batch_metrics
