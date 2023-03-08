@@ -2,7 +2,9 @@ import os
 import unittest
 from code.base_class.artifacts import artifactConfig
 from code.base_class.method import methodConfig
+from code.lib.encoding.multi_encoder import multi_encoder
 from code.lib.encoding.onnx_encoder import ONNX
+from code.lib.encoding.pytorch_encoder import torch_encoder
 from code.stage_2_code.Method_MLP import Method_MLP
 
 import numpy as np
@@ -46,8 +48,13 @@ class TestArtifacts(unittest.TestCase):
         y = pd.Series(np.random.rand(20))
 
         method_obj_0.train_model(X, y)
+
+        # tests encoding of multiple formats simultaneously
         artifact_encoder_0 = ONNX(a_config_0, method_obj_0)
-        artifact_encoder_0.serialize()
+        artifact_encoder_1 = torch_encoder(a_config_0, method_obj_0)
+
+        multi_encoder_0 = multi_encoder(artifact_encoder_0, artifact_encoder_1)
+        multi_encoder_0.serialize()
 
         method_obj_1 = artifact_encoder_0.deserialize()
         # checks to make sure the model is structurally sound. If not an exception is thrown
@@ -57,6 +64,15 @@ class TestArtifacts(unittest.TestCase):
         ):
             os.remove(
                 f'{a_config_0["folder_path"]}{a_config_0["model_name"]}{artifact_encoder_0.extension}'
+            )
+
+        method_obj_2 = artifact_encoder_1.deserialize()
+        assert method_obj_2 is not None
+        if os.path.exists(
+            f'{a_config_0["folder_path"]}{a_config_0["model_name"]}{artifact_encoder_1.extension}'
+        ):
+            os.remove(
+                f'{a_config_0["folder_path"]}{a_config_0["model_name"]}{artifact_encoder_1.extension}'
             )
 
 
