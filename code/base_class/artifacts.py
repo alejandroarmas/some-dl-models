@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple, TypedDict
+from typing import Literal, Optional, Tuple, TypedDict
 
 from torch import nn
 
@@ -10,6 +10,7 @@ class artifactConfig(TypedDict):
     batch_size: int
     input_dim: Tuple[int, ...]
     output_dim: int
+    input_type: Literal["tensor", "string"]
 
 
 class artifacts(ABC):
@@ -19,6 +20,7 @@ class artifacts(ABC):
     batch_size: int
     input_dim: Tuple
     output_dim: int
+    input_type: Literal["tensor", "string"]
 
     model: Optional[nn.Module]
 
@@ -32,6 +34,10 @@ class artifacts(ABC):
         self.batch_size = config["batch_size"]
         self.output_dim = config["output_dim"]
         self.model = model
+        if "input_type" in config.keys():
+            self.input_type = config["input_type"]
+        else:
+            self.input_type = "tensor"
 
     @abstractmethod
     def serialize(self):

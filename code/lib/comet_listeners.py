@@ -35,6 +35,7 @@ class CometMethodHandler(MLEventListener):
                 self.__experiment.log_metrics(data_report, step=self.__step, epoch=data.epoch)
 
                 self.__step = self.__step + 1
+
         else:
             print(f"data_report: {data_report}")
 
@@ -49,7 +50,6 @@ class CometEvaluateHandler(MLEventListener):
         self.__experiment = experiment
 
     def update(self, data: EvaluateNotification) -> None:
-
         if self.__experiment is not None:
             self.__experiment.log_parameter("measure", data.measure)
             self.__experiment.log_metric("evaluation", data.evaluation)
