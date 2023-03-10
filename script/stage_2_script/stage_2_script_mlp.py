@@ -106,6 +106,7 @@ if 1:
             "input_dim": m_config["hyperparameters"]["input_dim"],
             "batch_size": 1,
             "output_dim": m_config["hyperparameters"]["output_dim"],
+            "input_type": "tensor",
         }
     )
 

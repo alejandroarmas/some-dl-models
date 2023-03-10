@@ -37,7 +37,6 @@ class CometMethodHandler(MLEventListener):
                     self.__experiment.log_metrics(
                         data_report, step=self.__train_step, epoch=data.epoch
                     )
-
                     self.__train_step = self.__train_step + 1
             elif data.type == "test":
                 with self.__experiment.test():  # Uses Comet's testing namespace
@@ -61,7 +60,6 @@ class CometEvaluateHandler(MLEventListener):
         self.__experiment = experiment
 
     def update(self, data: EvaluateNotification) -> None:
-
         if self.__experiment is not None:
             self.__experiment.log_parameter("measure", data.measure)
             self.__experiment.log_metric("evaluation", data.evaluation)
