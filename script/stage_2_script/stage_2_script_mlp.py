@@ -77,7 +77,7 @@ if 1:
             "name": f"{algorithm_type}-method",
             "description": "This is a multilayer perceptron",
             "hyperparameters": {
-                "max_epoch": 500,
+                "max_epoch": 10,
                 "learning_rate": 5e-3,
                 "input_dim": 784,
                 "hidden_dim_0": 256,

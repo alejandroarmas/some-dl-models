@@ -6,6 +6,7 @@ Base MethodModule class for all models and frameworks
 # License: TBD
 
 import abc
+import copy
 from code.lib.notifier import MethodNotifier
 from typing import Optional, TypedDict
 
@@ -42,7 +43,9 @@ class method:
     data = None
     notification_manager: Optional[MethodNotifier]
 
-    batch_metrics: Optional[MetricCollection]
+    train_batch_metrics: Optional[MetricCollection]
+    test_batch_metrics: Optional[MetricCollection]
+
     method_start_time = None
     method_stop_time = None
     method_running_time = None
@@ -59,7 +62,18 @@ class method:
         self.method_name = config["name"]
         self.method_description = config["description"]
         self.notification_manager = manager
-        self.batch_metrics = metrics
+        self.train_batch_metrics = metrics
+        # a deep copy is necessary to prevent cross-contamination of metrics
+        self.test_batch_metrics = copy.deepcopy(metrics)
+
+    # makes batch_metrics an alias for train_batch_metrics to preserve existing functionality
+    @property
+    def batch_metrics(self):
+        return self.train_batch_metrics
+
+    @batch_metrics.setter
+    def batch_metrics(self, value):
+        self.batch_metrics = value
 
     # running function
     @abc.abstractmethod
