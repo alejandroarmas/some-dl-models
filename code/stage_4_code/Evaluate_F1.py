@@ -24,10 +24,6 @@ class Evaluate_F1(evaluate):
         super().__init__(config, manager)
 
     def evaluate(self) -> float:
-<<<<<<< HEAD
-=======
-
->>>>>>> 4f131d2 (feat: joke dataset char tokenization lstm model)
         output: float = f1_score(self.data["true_y"], self.data["pred_y"], average=None)  # type: ignore
 
         if self._manager is not None:
