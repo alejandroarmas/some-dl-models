@@ -48,14 +48,14 @@ class MethodJokeGeneration(method, nn.Module):
         self.vocab_size = p["vocab_size"]
 
         self.embedding = nn.Embedding(
-            num_embeddings=p["vocab_size"],
+            num_embeddings=p["vocab_size"] + 1,  # to skip index 0
             embedding_dim=p["output_dim_0"],
         )
-        print(f"{self.embedding.weight.shape=}")
+        # print(f"{self.embedding.weight.shape=}")
         self.lstm = nn.LSTM(
             input_size=p["output_dim_0"], hidden_size=p["output_dim_1"], batch_first=True
         )
-        self.fc = nn.Linear(p["output_dim_1"], p["vocab_size"])
+        self.fc = nn.Linear(p["num_character_context"] * p["output_dim_1"], p["vocab_size"])
 
     def forward(self, input_data, hidden, cell):
         # print(f'{input_data.shape=}')
@@ -66,16 +66,18 @@ class MethodJokeGeneration(method, nn.Module):
         # print(f'{output.shape=}')
         # print(f'{hidden.shape=}')
         # print(f'{cell.shape=}')
+        output = output.reshape((output.shape[0], -1))
+        # print(f'{output.shape=}')
         output = F.relu(output)
         logits = self.fc(output)
         # print(f'{logits.shape=}')
 
         return logits, (hidden, cell)
 
-    def init_state(self):
+    def init_state(self, num_samples: int):
         return (
-            torch.zeros(1, self.batch_size, self.hidden_size),
-            torch.zeros(1, self.batch_size, self.hidden_size),
+            torch.zeros(1, num_samples, self.hidden_size),
+            torch.zeros(1, num_samples, self.hidden_size),
         )
 
     # backward error propagation will be implemented by pytorch automatically
@@ -94,7 +96,7 @@ class MethodJokeGeneration(method, nn.Module):
         }
 
         for epoch in range(self.max_epoch):
-            state_h, state_c = self.init_state()
+            state_h, state_c = self.init_state(self.batch_size)
 
             for idx, batch in enumerate(self.training_loader):
 
@@ -111,11 +113,11 @@ class MethodJokeGeneration(method, nn.Module):
                 optimizer.step()
 
                 if self.notification_manager is not None:
-                    self.batch_metrics.update(y_pred.max(1)[1], batch["label"])
+                    self.batch_metrics.update(y_pred, batch["label"])
 
             accumulated_loss = self.batch_metrics.compute()
 
-            print(f"{train_loss.item()=}")
+            # print(f"{train_loss.item()=}")
             if epoch % 10 == 0:
                 print(
                     "Epoch:",
@@ -144,12 +146,12 @@ class MethodJokeGeneration(method, nn.Module):
 
         with torch.no_grad():
             for batch in self.testing_loader:
-                y_pred = self.test(batch["image"])
-                self.batch_metrics.update(batch["label"], y_pred.max(1)[1])
-            accumulated_loss = self.batch_metrics.compute()
-            print(f"{accumulated_loss.items()=}")
+                y_pred, _ = self.forward(batch["context"], *self.init_state(self.batch_size))
+                self.batch_metrics.update(y_pred, batch["label"])
+            self.batch_metrics.compute()
+            # print(f"{accumulated_loss.items()=}")
 
-        return {"pred_y": y_pred.max(1)[1], "true_y": batch["label"]}
+        return {"pred_y": torch.argmax(y_pred, axis=1), "true_y": batch["label"]}
 
     def run(self):
         print("method running...")

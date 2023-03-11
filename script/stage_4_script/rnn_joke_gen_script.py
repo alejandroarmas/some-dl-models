@@ -76,9 +76,7 @@ def main():
     d_notifier = DatasetNotifier()
     d_notifier.subscribe(experiment_tracker.dataset_listener, MLEventType("load"))
     data_obj = JokeFilePreprocess(d_config, d_notifier)
-    tokenizer = TextTokenizer(
-        data_obj, ["doesnt matter"], 696969
-    )  # we only want this for extracting char in vocab
+    tokenizer = TextTokenizer(data_obj, 696969)  # we only want this for extracting char in vocab
 
     r_config = resultConfig(
         {
@@ -89,7 +87,9 @@ def main():
         }
     )
 
-    output_dim = len(tokenizer.vocab_characters()) + 1
+    output_dim = len(tokenizer.vocab.vocabulary())
+
+    print(f"{output_dim=}")
 
     m_config = methodConfig(
         {
@@ -99,15 +99,14 @@ def main():
                 "max_epoch": 500,
                 "learning_rate": 1e-2,
                 "batch_size": 32,
-                "output_dim_0": 10,
-                "output_dim_1": 100,
+                "output_dim_0": 7,
+                "output_dim_1": 7,
                 "vocab_size": output_dim,
-                "num_character_context": 3,
+                "num_character_context": 5,
             },
         }
     )
 
-    print(f"{len(tokenizer.vocab_characters())=}")
     s_config = SettingConfig(
         {
             "name": "Setting_Train_Test_Split",

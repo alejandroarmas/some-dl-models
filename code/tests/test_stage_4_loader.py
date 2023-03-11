@@ -30,7 +30,7 @@ class TestNLPDataset(unittest.TestCase):
         num_batch_size = 32
 
         loader = JokeFilePreprocess(d_config)
-        tokenizer = TextTokenizer(loader, ["<n>"], num_character_context)
+        tokenizer = TextTokenizer(loader, num_character_context)
 
         train_dataset: NLPDataset = tokenizer.dataset("train")
 
