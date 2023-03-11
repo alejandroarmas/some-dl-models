@@ -11,6 +11,7 @@ from code.base_class.dataset import dataset, datasetConfig
 from code.lib.notifier import DatasetNotifier
 from typing import Callable, Literal, Optional
 
+import pandas as pd
 import torch
 from torch.utils.data import Dataset
 
@@ -57,10 +58,44 @@ class JokeFilePreprocess(dataset):
         super().__init__(config, manager)
 
     def load(self) -> list[str]:
+        filePath = self.dataset_source_folder_path + self.dataset_source_file_name
+        filePathClean = self.dataset_source_folder_path + "data_clean.csv"
 
-        data = []
+        print("\nloading data...\n")
+        joke_csv: pd.DataFrame = pd.read_csv(filePath, header=None)
 
-        with open(f"{self.dataset_source_folder_path}{self.dataset_source_file_name}", "r") as f:
+        # remove ID column from dataset
+        jokes: pd.Series = joke_csv.iloc[:, 1]
+
+        # drop rows that have links
+        http_rows = jokes[jokes[:].str.contains("http", case=False)]
+        jokes = jokes.drop(http_rows.index)
+
+        # drop rows that contain parentheses
+        paren_rows = jokes[jokes[:].str.contains(r"\(|\)", regex=True)]
+        jokes = jokes.drop(paren_rows.index)
+
+        # drop any rows that contain '\r'
+        jokes[:] = jokes[:].replace(to_replace=r".*\r.*\n?", value="", regex=True)
+
+        # drop rows that contain '&g'
+        jokes[:] = jokes[:].replace(to_replace=r".*&g.*\n?", value="", regex=True)
+
+        # remove characters
+        jokes[:] = jokes[:].replace(
+            to_replace=r"[\\/()\[\]!.?*-\:#&^%;><_~`]", value="", regex=True
+        )
+
+        # remove digits
+        jokes[:] = jokes[:].replace(to_replace=r"\d", value="", regex=True)
+
+        # write to file
+        print("\nwriting 'clean' data...\n")
+        jokes.to_csv(filePathClean, index=False, header=False)
+
+        data: list[str] = []
+
+        with open(filePathClean, "r") as f:
             while line := f.readline().rstrip():
                 comma_index: int = (
                     line.find(",") + 2
@@ -72,7 +107,7 @@ class JokeFilePreprocess(dataset):
         return data
 
 
-class Tokenizer(ABC):
+class Vocabulary(ABC):
     @abstractmethod
     def stoi(self, s: str) -> int:
         ...
@@ -82,28 +117,16 @@ class Tokenizer(ABC):
         ...
 
     @abstractmethod
-    def vocab_characters(self) -> list[str]:
-        ...
-
-    @abstractmethod
-    def dataset(self, type: Literal["test", "train", "validation"]) -> NLPDataset:
+    def vocabulary(self) -> list[str]:
         ...
 
 
-class TextTokenizer(Tokenizer):
+class WordVocabulary(Vocabulary):
+    def __init__(self, sentences: list[str], extra_keys: Optional[list[str]] = None):
 
-    words: list[str]
-    blocksize: int
+        words: list[str] = sorted(list(set([word for s in sentences for word in s.split(" ")])))
 
-    def __init__(self, loader: dataset, extra_keys: Optional[list[str]] = None, block_sz: int = 3):
-        self.sentences: list[str] = loader.load()
-        self.blocksize = block_sz
-        random.shuffle(self.sentences)
-        self.idx_1 = int(len(self.sentences) * 0.8)
-        self.idx_2 = int(len(self.sentences) * 0.9)
-
-        self.chars: list[str] = sorted(list(set("".join(self.sentences))))
-        self.stoi_dict: dict[str, int] = {c: i for i, c in enumerate(self.chars)}
+        self.stoi_dict: dict[str, int] = {word: i for i, word in enumerate(words)}
         num_keys: int = len(self.stoi_dict)
 
         if extra_keys:
@@ -119,13 +142,35 @@ class TextTokenizer(Tokenizer):
     def itos(self, i: int) -> str:
         return self.itos_dict[i]
 
-    def vocab_characters(self) -> list[str]:
-        return self.chars
+    def vocabulary(self) -> list[str]:
+        return list(self.stoi_dict.keys())
+
+
+class Tokenizer(ABC):
+    @abstractmethod
+    def dataset(self, type: Literal["test", "train", "validation"]) -> NLPDataset:
+        ...
+
+
+class TextTokenizer(Tokenizer):
+
+    sentences: list[str]
+    blocksize: int
+    vocab: WordVocabulary
+
+    def __init__(self, loader: dataset, block_sz: int = 3):
+        self.blocksize = block_sz
+        self.sentences: list[str] = loader.load()
+        self.vocab = WordVocabulary(sentences=self.sentences, extra_keys=["<End>"])
+
+        random.shuffle(self.sentences)
+        self.idx_1 = int(len(self.sentences) * 0.8)
+        self.idx_2 = int(len(self.sentences) * 0.9)
 
     def dataset(self, type: Literal["test", "train", "validation"]) -> NLPDataset:
 
         X: list[list[int]] = []
-        Y: list[list[int]] = []
+        Y: list[int] = []
 
         match type:
             case "train":
@@ -138,13 +183,12 @@ class TextTokenizer(Tokenizer):
                 l: int = self.idx_2  # type: ignore[no-redef]
                 r: int = len(self.sentences) - 1  # type: ignore[no-redef]
 
-        for word in self.sentences[l:r]:
-            context: list[int] = [len(self.vocab_characters()) for _ in range(self.blocksize)]
-            for c in word:
-                one_hot = [0 for _ in range(len(self.vocab_characters()) + 1)]
-                ix = self.stoi(c)
-                one_hot[ix] = 1
+        for sentence in self.sentences[l:r]:
+            context: list[int] = [len(self.vocab.vocabulary()) for _ in range(self.blocksize)]
+            for word in sentence.split(" "):
+                ix = self.vocab.stoi(word)
                 X.append(context)
-                Y.append(one_hot)
+                Y.append(ix)
                 context = context[1:] + [ix]
+
         return NLPDataset(torch.tensor(X), torch.tensor(Y))
