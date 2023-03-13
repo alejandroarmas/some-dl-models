@@ -45,6 +45,7 @@ class method:
 
     train_batch_metrics: Optional[MetricCollection]
     test_batch_metrics: Optional[MetricCollection]
+    val_batch_metrics: Optional[MetricCollection]
 
     method_start_time = None
     method_stop_time = None
@@ -65,6 +66,7 @@ class method:
         self.train_batch_metrics = metrics
         # a deep copy is necessary to prevent cross-contamination of metrics
         self.test_batch_metrics = copy.deepcopy(metrics)
+        self.val_batch_metrics = copy.deepcopy(metrics)
 
     # makes batch_metrics an alias for train_batch_metrics to preserve existing functionality
     @property

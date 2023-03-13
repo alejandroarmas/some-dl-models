@@ -25,6 +25,7 @@ class CometMethodHandler(MLEventListener):
         self.__experiment = experiment
         self.__train_step = 1
         self.__test_step = 1
+        self.__val_step = 1
 
     def update(self, data: MethodNotification) -> None:
 
@@ -46,8 +47,15 @@ class CometMethodHandler(MLEventListener):
                     )
 
                     self.__test_step = self.__test_step + 1
+            elif data.type == "validation":
+                with self.__experiment.validate():
+                    self.__experiment.log_metrics(
+                        data_report, step=self.__val_step, epoch=data.epoch
+                    )
+                    self.__val_step = self.__val_step + 1
+
         else:
-            print(f"data_report: {data_report}")
+            print(f"{data.type} data_report: {data_report}")
 
 
 class CometEvaluateHandler(MLEventListener):

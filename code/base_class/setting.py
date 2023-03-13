@@ -20,12 +20,14 @@ from code.lib.notifier import (
 from typing import Optional, TypedDict
 
 import torch
+from typing_extensions import NotRequired
 
 
 class SettingConfig(TypedDict):
     name: str
     description: str
     device: torch.device
+    params: NotRequired[dict]
 
 
 class setting:
@@ -36,6 +38,7 @@ class setting:
 
     _setting_name: str
     _setting_description: str
+    params: dict
 
     _dataset: dataset
     _method: method
@@ -50,6 +53,10 @@ class setting:
         self._setting_description = config["description"]
         self.__manager = manager
         self.device = config["device"]
+        if "params" in config.keys():
+            self.params = config["params"]
+        else:
+            self.params = {}
 
     def prepare(
         self,

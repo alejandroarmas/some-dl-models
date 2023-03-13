@@ -10,7 +10,7 @@ class artifactConfig(TypedDict):
     batch_size: int
     input_dim: Tuple[int, ...]
     output_dim: int
-    input_type: Literal["tensor", "string"]
+    input_type: Literal["tensor", "string", "graph"]
 
 
 class artifacts(ABC):
@@ -20,7 +20,7 @@ class artifacts(ABC):
     batch_size: int
     input_dim: Tuple
     output_dim: int
-    input_type: Literal["tensor", "string"]
+    input_type: Literal["tensor", "string", "graph"]
 
     model: Optional[nn.Module]
 

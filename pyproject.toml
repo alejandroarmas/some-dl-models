@@ -13,7 +13,6 @@ packages = [{include = "some-dl-models"}]
 [tool.poetry.dependencies]
 python = ">=3.9,<3.12"
 comet-ml = ">=3.31.22"
-torch = ">=1.13.1"
 scikit-learn = ">=1.2.0"
 torchmetrics = "^0.11.1"
 pandas = "^1.5.3"
@@ -24,6 +23,12 @@ pillow = "^9.4.0"
 torchvision = "^0.14.1"
 transformers = "^4.26.1"
 torchtext = "^0.14.1"
+torch = ">=1.13.1"
+torch-geometric = "^2.2.0"
+torch-scatter = {version = "^2.1.0+pt113cpu", source = "torch-wheels"}
+torch-sparse = {version = "^0.6.16+pt113cpu", source = "torch-wheels"}
+torch-cluster = {version = "^1.6.0+pt113cpu", source = "torch-wheels"}
+torch-spline-conv = {version = "^1.2.1+pt113cpu", source = "torch-wheels"}
 
 
 [tool.poetry.group.dev.dependencies]
@@ -35,6 +40,13 @@ pre-commit = "^3.0.0"
 conventional-pre-commit = "^2.1.1"
 coverage = "^7.1.0"
 pandas-stubs = "^1.5.3.230203"
+
+
+[[tool.poetry.source]]
+name = "torch-wheels"
+url = "https://data.pyg.org/whl/torch-1.13.1+cpu.html"
+default = false
+secondary = false
 
 [build-system]
 requires = ["poetry-core"]
