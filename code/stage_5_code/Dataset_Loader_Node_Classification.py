@@ -49,6 +49,7 @@ class Dataset_Loader(dataset):
             "{}/node".format(self.dataset_source_folder_path), dtype=np.dtype(str)
         )
         features = sp.csr_matrix(idx_features_labels[:, 1:-1], dtype=np.float32)
+        print(idx_features_labels[:, -1])
         onehot_labels = self.encode_onehot(idx_features_labels[:, -1])
 
         # load link data from file and build graph
@@ -72,6 +73,8 @@ class Dataset_Loader(dataset):
         # convert to pytorch tensors
         features = torch.FloatTensor(np.array(features.todense()))
         labels = torch.LongTensor(np.where(onehot_labels)[1])
+
+        print(labels)
         adj = self.sparse_mx_to_torch_sparse_tensor(norm_adj)
 
         # print(adj)

@@ -27,7 +27,7 @@ class Setting_Equal_Sampling_Split(setting):
         self._result.data = output_result
         self._result.save()
 
-        self._artifacts.serialize()
+        #        self._artifacts.serialize()
 
         self._evaluate.data = output_result
 
