@@ -33,8 +33,8 @@ class Citeseer_GCN(method, nn.Module):
         self.act = nn.ReLU()
         self.conv1 = GCNConv(p["input_dim"], p["hidden_dim_1"])
         self.drop1 = Dropout(self.dropout)
-        self.conv2 = GCNConv(p["hidden_dim_1"], p["hidden_dim_2"])
-        self.drop2 = Dropout(self.dropout)
+        #self.conv2 = GCNConv(p["hidden_dim_1"], p["hidden_dim_2"])
+        #self.drop2 = Dropout(self.dropout)
         self.fc = nn2.Linear(p["hidden_dim_1"], self.output_dim)
 
     def forward(self, X, edges):
