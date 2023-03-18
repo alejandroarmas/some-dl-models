@@ -4,7 +4,6 @@ from code.lib.notifier import ClassificationNotification, MethodNotifier
 from typing import Optional
 
 import torch
-import torch.nn as nn2
 from torch import nn
 from torch.nn import Dropout
 from torch_geometric.nn.conv import GCNConv  # type: ignore
@@ -26,28 +25,20 @@ class Citeseer_GCN(method, nn.Module):
         self.output_dim = p["output_dim"]
         self.max_epoch = p["max_epoch"]
         self.weight_decay = p["weight_decay"]
-        self.dropout = p["dropout"]
 
-
-        # note: potentially add a dropout layer between conv1 and conv2?
         self.act = nn.ReLU()
-        self.conv1 = GCNConv(p["input_dim"], p["hidden_dim_1"])
-        self.drop1 = Dropout(self.dropout)
-        self.conv2 = GCNConv(p["hidden_dim_1"], p["hidden_dim_2"])
-        self.drop2 = Dropout(self.dropout)
-        self.fc = nn2.Linear(p["hidden_dim_1"], self.output_dim)
+        self.conv1 = GCNConv(p["input_dim"], self.output_dim)
+        #self.conv1 = GCNConv(p["input_dim"], p["hidden_dim"])
+        #self.fc = nn.Linear(p["hidden_dim"], self.output_dim)
 
     def forward(self, X, edges):
         out = X
         out = self.act(self.conv1(out, edges))
-        #out = self.drop1(out)
-        #out = self.act(self.conv2(out, edges))
-        #out = self.drop2(out)
-        out = self.fc(out)
+        #out = self.fc(out)
         return out
 
     def train_model(self):
-        optimizer = torch.optim.Adam(
+        optimizer = torch.optim.Adagrad(
             self.parameters(), lr=self.learning_rate, weight_decay=self.weight_decay
         )
         loss_function = nn.CrossEntropyLoss()

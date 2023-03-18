@@ -94,13 +94,11 @@ if 1:
             "description": "This is a convolutional GNN",
             "hyperparameters": {
                 "input_dim": 3703,
-                "max_epoch": 70,
-                "hidden_dim_1": 1851,
-                #"hidden_dim_2": 256,
+                "max_epoch": 116,
+                #"hidden_dim": 9,
                 "output_dim": 6,
-                "learning_rate": 0.001,
-                "dropout": 0,
-                "weight_decay": 0.07, #0.95
+                "learning_rate": 0.03,
+                "weight_decay": 0.13,
             },
         }
     )
